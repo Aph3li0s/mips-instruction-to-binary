@@ -34,7 +34,7 @@
                 else {
                     // subcase 1: is a non-negative number (words[3] >= 0)
 
-                    // subcase 2: is a negative number (words[3] < 0)
+                    // subcase 2: is a negative number (words[3] < 0) bieu dien dang bu 2 - ham twocompletement
                 }
             }
         }
@@ -63,6 +63,7 @@ void init();
 vector<string> restructure(char code[255]);
 string bin_to_hex(string bin);
 string toBin5(string n);
+string twoComplement(string b);
 
 vector<string> restructure(char code[255]) {
     vector<string> _;
@@ -107,6 +108,24 @@ string toBin5(string n) {
     bin = to_string(n_ % 2) + bin;
     n_ /= 2;
     return bin;
+}
+
+string twoComplement(string b) {
+    bool found1 = false;
+    string b2 = "";
+    int id = b.size() - 1;
+    while(id > -1) {
+        if(found1 == false) {
+            b2 = b[id] + b2;
+            if(b[id] == '1') found1 = true;
+        }
+        else {
+            if(b[id] == '0') b2 = '1' + b2;
+            if(b[id] == '1') b2 = '0' + b2;
+        }
+        id--;
+    }
+    return b2;
 }
 
 void init() {
