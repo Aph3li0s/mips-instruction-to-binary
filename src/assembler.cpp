@@ -18,7 +18,8 @@ int main() {
         char* c_str = new char [tmp.size() + 1];
         strcpy(c_str, tmp.c_str());
         words = restructure(c_str);
-      
+        if(!words.size()) continue;
+        
         // test ket qua
         for(auto &word : words) {
             cout << word << " ";
