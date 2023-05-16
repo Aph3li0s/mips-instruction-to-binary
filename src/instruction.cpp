@@ -59,7 +59,7 @@ map<string, string> OPCODE;
 map<string, string> FUNCT;
 map<string, string> TYPE;
 
-void init();
+void reg_dict();
 vector<string> restructure(char code[255]);
 string bin_to_hex(string bin);
 string toBin5(string n);
@@ -128,7 +128,7 @@ string twoComplement(string b) {
     return b2;
 }
 
-void init() {
+void reg_dict() {
     // type R
     TYPE["add"] = "R";
     TYPE["addu"] = "R";
