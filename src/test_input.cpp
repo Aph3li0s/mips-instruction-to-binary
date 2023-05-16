@@ -20,7 +20,8 @@ int main() {
         char* c_str = new char [tmp.size() + 1];
         strcpy(c_str, tmp.c_str());
         words = restructure(c_str);
-      
+        if(!words.size()) continue;
+        
         // test ket qua
         for(auto &word : words) {
             cout << word << " ";
@@ -114,14 +115,14 @@ void init() {
 // Tra ve vector
 vector<string> restructure(char code[255]) {
     vector<string> _;
-    auto k = strtok(code, " ,");
+    auto k = strtok(code, " ,\t");
     while(k != NULL) {
         if(*k == '#') break;
         if(*k != '.') {
             std::string str(k);
             _.push_back(k);
         }
-        k = strtok(NULL, " ,");
+        k = strtok(NULL, " ,\t");
     }
     return _;
 }
