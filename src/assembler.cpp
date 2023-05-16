@@ -4,8 +4,8 @@ using namespace std;
 vector<char*> restructure(char code[255], char delim[2] = " ,");
 
 int main() {
-    fstream fi("input.txt");
-    fstream fo("output.txt");
+    fstream fi("../testcases/input.txt");
+    fstream fo("../output/output.txt");
     string tmp;
     while(getline(fi, tmp)) {
         vector<char*> words;
