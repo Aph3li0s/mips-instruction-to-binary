@@ -9,14 +9,33 @@
     // neu la lenh R
     if(TYPE[words[0]] == "R") {
             // Struct: OPCODE + RS + RT + RD + SHAMT + FUNCT
-            if(words[0] != "sll" && words[0] != "srl") {
+            if(words[0] == "sll" || words[0] == "srl") {
                 // TODO
                 // These cases: RS = 00000, RD = words[1], RT = words[2], SHAMT = TO_BIN_5(words[3])
             }
 
+            else if(words[0] == "jr") {
+                // chua biet lam
+            }
+
             else {
-                // TODO
                 // Theses cases: RS = words[2], RT = words[3], RD = words[1], SHAMT = 00000
+
+                // case 1: words[3] is not a number - words[3] is register.
+                // eg. add $s1, $s2, $s3
+                if(REG.find(words[3]) != REG.end()) {
+                    string SHAMT = "00000";
+                    binCode = OPCODE[words[0]] + REG[words[2]] + REG[words[3]] + REG[words[1]] + SHAMT + FUNCT[words[0]];
+                    cout << binCode << endl;
+                }
+
+                // case 2: words[3] is a number. 
+                // eg. add $s1, $s2, 10
+                else {
+                    // subcase 1: is a non-negative number (words[3] >= 0)
+
+                    // subcase 2: is a negative number (words[3] < 0)
+                }
             }
         }
 
