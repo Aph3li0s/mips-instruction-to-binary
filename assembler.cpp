@@ -21,6 +21,8 @@ int main() {
     }
 }
 
+// Xoa comments, spaces, commas, .data, .text
+// Tra ve vector
 vector<char*> restructure(char code[255], char delim[2] = " ,") {
     vector<char*> _;
     auto k = strtok(code, delim);
