@@ -4,7 +4,7 @@ using namespace std;
 vector<char*> restructure(char code[255], char delim[2] = " ,");
 
 int main() {
-  fstream fi("input.txt");
+    fstream fi("input.txt");
     fstream fo("output.txt");
     string tmp;
     while(getline(fi, tmp)) {
