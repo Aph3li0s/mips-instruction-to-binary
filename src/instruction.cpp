@@ -42,6 +42,7 @@ map<string, string> TYPE;
 
 void init();
 vector<string> restructure(char code[255]);
+string bin_to_hex(string bin);
 
 vector<string> restructure(char code[255]) {
     vector<string> _;
@@ -55,6 +56,21 @@ vector<string> restructure(char code[255]) {
         k = strtok(NULL, " ,\t");
     }
     return _;
+}
+
+string bin_to_hex(string bin) {
+    string hex = "0x";
+    for(int i = 0; i < bin.size(); i+=4) {
+        int v = (bin[i] - '0') * 8 + (bin[i + 1] - '0') * 4 + (bin[i + 2] - '0') * 2 + (bin[i + 3] - '0') * 1;
+        if(v < 10) hex = hex + to_string(v);
+        else if(v == 10) hex = hex + 'a';
+        else if(v == 11) hex = hex + 'b';
+        else if(v == 12) hex = hex + 'c';
+        else if(v == 13) hex = hex + 'd';
+        else if(v == 14) hex = hex + 'e';
+        else hex = hex + 'f';
+    }
+    return hex;
 }
 
 void init() {
