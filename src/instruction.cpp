@@ -62,6 +62,7 @@ map<string, string> TYPE;
 void init();
 vector<string> restructure(char code[255]);
 string bin_to_hex(string bin);
+string toBin5(string n);
 
 vector<string> restructure(char code[255]) {
     vector<string> _;
@@ -90,6 +91,22 @@ string bin_to_hex(string bin) {
         else hex = hex + 'f';
     }
     return hex;
+}
+
+string toBin5(string n) {
+    int n_ = stoi(n);
+    string bin = "";
+    bin = to_string(n_ % 2) + bin;
+    n_ /= 2;
+    bin = to_string(n_ % 2) + bin;
+    n_ /= 2;
+    bin = to_string(n_ % 2) + bin;
+    n_ /= 2;
+    bin = to_string(n_ % 2) + bin;
+    n_ /= 2;
+    bin = to_string(n_ % 2) + bin;
+    n_ /= 2;
+    return bin;
 }
 
 void init() {
