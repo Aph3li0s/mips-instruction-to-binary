@@ -9,10 +9,12 @@ void init();
 vector<string> restructure(char code[255]);
 
 int main() {
-    init();
-    fstream fi("../testcases/input.txt");
+    init();\
+    //Đọc file và xuất file
+    fstream fi("../testcases/test1.txt");
     fstream fo("../output/output.txt");
     string tmp;
+    
     while(getline(fi, tmp)) {
         vector<string> words;
         char* c_str = new char [tmp.size() + 1];
@@ -26,7 +28,7 @@ int main() {
         cout << endl;
         
         // test chuyen doi, vi du sub $t3 $t1 $t2
-        // cout << OPCODE[words[0]] << REG[words[2]] << REG[words[3]] << REG[words[1]] << "00000" << FUNCT[words[0]];
+        cout << OPCODE[words[0]] << REG[words[2]] << REG[words[3]] << REG[words[1]] << "00000" << FUNCT[words[0]];
         // -> can viet if/else de xu li tung cau lenh giong nhu tren ...
         // 00000001001010100101100000100010 -> dung
         
