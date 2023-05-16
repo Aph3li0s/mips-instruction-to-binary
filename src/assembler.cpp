@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-vector<char*> restructure(char code[255], char delim[2] = " ,");
+vector<char*> restructure(char code[255]);
 
 int main() {
     fstream fi("../testcases/input.txt");
@@ -23,13 +23,13 @@ int main() {
 
 // Xoa comments, spaces, commas, .data, .text
 // Tra ve vector
-vector<char*> restructure(char code[255], char delim[2] = " ,") {
+vector<char*> restructure(char code[255]) {
     vector<char*> _;
-    auto k = strtok(code, delim);
+    auto k = strtok(code, " ,");
     while(k != NULL) {
         if(*k == '#') break;
         if(*k != '.') _.push_back(k);
-        k = strtok(NULL, delim);
+        k = strtok(NULL, " ,");
     }
     return _;
 }
