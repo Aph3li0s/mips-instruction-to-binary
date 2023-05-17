@@ -1,56 +1,8 @@
-//Sử dụng để lưu từ điển
-//Xác định loại lệnh (R hay I), chuyển các mã lệnh thành binary code
-//Viết thêm 1 hàm chuyển từ binary sang hex để dễ đối chiếu hơn
-
-/*
-    y tuong
-    moi lan xet 1 dong lenh
-    
-    // neu la lenh R
-    if(TYPE[words[0]] == "R") {
-            // Struct: OPCODE + RS + RT + RD + SHAMT + FUNCT
-            if(words[0] == "sll" || words[0] == "srl") {
-                // TODO
-                // These cases: RS = 00000, RD = words[1], RT = words[2], SHAMT = TO_BIN_5(words[3])
-            }
-
-            else if(words[0] == "jr") {
-                // chua biet lam
-            }
-
-            else {
-                // Theses cases: RS = words[2], RT = words[3], RD = words[1], SHAMT = 00000
-
-                // case 1: words[3] is not a number - words[3] is register.
-                // eg. add $s1, $s2, $s3
-                if(REG.find(words[3]) != REG.end()) {
-                    string SHAMT = "00000";
-                    binCode = OPCODE[words[0]] + REG[words[2]] + REG[words[3]] + REG[words[1]] + SHAMT + FUNCT[words[0]];
-                    cout << binCode << endl;
-                }
-
-                // case 2: words[3] is a number. 
-                // eg. add $s1, $s2, 10
-                else {
-                    // subcase 1: is a non-negative number (words[3] >= 0)
-
-                    // subcase 2: is a negative number (words[3] < 0) bieu dien dang bu 2 - ham twocompletement
-                }
-            }
-        }
-        else {  // TYPE I
-            // TODO
-        }
-*/
 #include "instruction.h"
-#include <iostream>
-#include <vector>
-#include <string>
-#include <cstring>
-#include <map>
-#include <cmath>
+#include <bits/stdc++.h>
 using namespace std;
-//Lưu từ điển 
+
+//Mapping các giá trị thanh ghi, opcode, function và type (R và I) 
 map<string, string> REG;
 map<string, string> OPCODE;
 map<string, string> FUNCT;
@@ -62,7 +14,7 @@ int decimal_convert(string& binary);
 string twoComplement(string b);
 bool check_in_dict(string s);
 
-string format_R(string op, string s1, string s2, string s3);
+string format_R(string op, string rs, string rt, string rd, string shamt);
 string instruct_R(string op, string rs, string rt, string rd);
 string format_I(string op, string s1, string s2, string s3);
 string instruct_I(string op, string s1, string s2, string s3);
@@ -71,6 +23,7 @@ void reg_dict();
 //Mảng để lưu giá trị thanh ghi dưới dạng int
 int register_value[32] = {0};
 
+//Hàm chuyển nhị phân sang thập lục phân
 string hex_convert(string bin) {
     string hex = "0x";
     for(int i = 0; i < bin.size(); i+=4) {
@@ -86,12 +39,11 @@ string hex_convert(string bin) {
     return hex;
 }
 
-//Convert to n-bit binary string
+//Hàm chuyển thập phân sang nhị phân với n bit
 string binary_convert(string s, int n) {
     int dec = stoi(s);
     string bin;
-    bin.reserve(n); // Reserve space to avoid reallocation
-
+    bin.reserve(n); 
     for (int i = 0; i < n; ++i) {
         bin = to_string(dec % 2) + bin;
         dec /= 2;
@@ -100,6 +52,7 @@ string binary_convert(string s, int n) {
     return bin;
 }
 
+//Hàm chuyển nhị phân sang thập phân (int)
 int decimal_convert(string& binary) {
     int decimal = 0, power = 0;
     for (int i = binary.length() - 1; i >= 0; --i) {
@@ -146,19 +99,13 @@ bool check_rt(string s){
     else return false;
 }
 
-//add $s3, $s1, $s2
-/*
-    nên là:
-        check op : nếu op là sll / srl thì trường shamt khác "00000", mà thay vào
-        đó là độ dời bit dịch: từ 0 - 31
-        Khi này, format = op + "00000" + s1 + s3 + shamt + funct
-        Các trường hợp khác thì mới có công thức như dưới
-*/
+//Format của lệnh R
 string format_R(string op, string rs, string rt, string rd, string shamt = "00000"){
     string format = OPCODE[op] + REG[rs] + REG[rt] + REG[rd] + shamt + FUNCT[op];
     return format;
 }
 
+//Instruction cho lệnh R
 string instruct_R(string op, string rs, string rt, string rd){
     string ins;
     if (check_opcode(op) == true) ins = op;
@@ -323,3 +270,4 @@ void reg_dict() {
     FUNCT["sub"] = "100010";
     FUNCT["subu"] = "100011";
 }
+//int main(){}
