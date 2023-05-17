@@ -94,6 +94,13 @@ bool check_in_dict(string s){
 }
 
 //add $s3, $s1, $s2
+/*
+    nên là:
+        check op : nếu op là sll / srl thì trường shamt khác "00000", mà thay vào
+        đó là độ dời bit dịch: từ 0 - 31
+        Khi này, format = op + "00000" + s1 + s3 + shamt + funct
+        Các trường hợp khác thì mới có công thức như dưới
+*/
 string format_R(string op, string s1, string s2, string s3){
     string format = OPCODE[op] + REG[s1] + REG[s2] + REG[s3] + "00000" + FUNCT[op];
     return format;
@@ -136,6 +143,11 @@ string instruct_R(string op, string rs, string rt, string rd){
     return format_R(op, rs, rt, rd);
 }
 //addi $s3, $s1, $s2->n value
+    /*
+        phải check trước s3 là số âm hay dương
+        nếu s3 là số âm thì phải chuyển sang biểu diễn dạng bù 2
+        nếu s3 là số dương/0 thì mới dùng công thức ở bên dưới
+    */
 string format_I(string op, string s1, string s2, string s3){
     string format = OPCODE[op] + REG[s1] + REG[s2] + binary_convert(s3, 16);
     return format;
