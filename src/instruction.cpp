@@ -76,6 +76,34 @@ bool check_in_dict(string s){
     else return false;
 }
 
+// xem thử cái này nha :v, thay cho 2 hàm format bên dưới
+string assembler(vector<string> &words) {
+    string format;
+    if(TYPE[words[0]] == "R") {
+        if(words[0] == "jr") {
+            // chua biet lam
+            // Hỏi thầy
+        }
+
+        else if(words[0] == "sll" || words[0] == "srl") {
+            // do dịch bit không âm -> không cần xét âm dương
+            string shamt = binary_convert(words[3], 5);
+            format = OPCODE[words[0]] + "00000" + REG[words[2]] + REG[words[1]] + shamt + FUNCT[words[0]];
+        }
+
+        else {
+            format = OPCODE[words[0]] + REG[words[2]] + REG[words[3]] + REG[words[1]] + "00000" + FUNCT[words[0]];
+        }
+    }
+
+    else {
+        // chua biet lam
+        // m thêm phần này nha, hàm này chưa biết làm/ đặc biệt như lw/sw thì cứ chia ra if-else như trên để T6 hỏi thầy r xử lí sau
+    }
+
+    return format;
+}
+
 //Trả về dạng của type I và type R
 //Input có dạng: add $s3, $s1, $s2
 string format_R(string op, string s1, string s2, string s3){
