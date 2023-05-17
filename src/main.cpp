@@ -33,6 +33,9 @@ void txt_convert(){
 }
 
 void read_txt(){
+    //Lưu ý cho việc làm test case: 
+    //Các instruction thì các tham số của nó bắt buộc nằm trên 1 dòng, tức là có \n là sai cú pháp
+    
     ifstream fin("../in_out/input/test1.txt");
     ofstream fout("../in_out/output/test1.txt", ios_base::trunc);
     if (!fin) cout << "Can't open file";

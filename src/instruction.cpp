@@ -1,54 +1,10 @@
-//Sử dụng để lưu từ điển
-//Xác định loại lệnh (R hay I), chuyển các mã lệnh thành binary code
-//Viết thêm 1 hàm chuyển từ binary sang hex để dễ đối chiếu hơn
-
-/*
-    y tuong
-    moi lan xet 1 dong lenh
-    
-    // neu la lenh R
-    if(TYPE[words[0]] == "R") {
-            // Struct: OPCODE + RS + RT + RD + SHAMT + FUNCT
-            if(words[0] == "sll" || words[0] == "srl") {
-                // TODO
-                // These cases: RS = 00000, RD = words[1], RT = words[2], SHAMT = TO_BIN_5(words[3])
-            }
-
-            else if(words[0] == "jr") {
-                // chua biet lam
-            }
-
-            else {
-                // Theses cases: RS = words[2], RT = words[3], RD = words[1], SHAMT = 00000
-
-                // case 1: words[3] is not a number - words[3] is register.
-                // eg. add $s1, $s2, $s3
-                if(REG.find(words[3]) != REG.end()) {
-                    string SHAMT = "00000";
-                    binCode = OPCODE[words[0]] + REG[words[2]] + REG[words[3]] + REG[words[1]] + SHAMT + FUNCT[words[0]];
-                    cout << binCode << endl;
-                }
-
-                // case 2: words[3] is a number. 
-                // eg. add $s1, $s2, 10
-                else {
-                    // subcase 1: is a non-negative number (words[3] >= 0)
-
-                    // subcase 2: is a negative number (words[3] < 0) bieu dien dang bu 2 - ham twocompletement
-                }
-            }
-        }
-        else {  // TYPE I
-            // TODO
-        }
-*/
 #include "instruction.h"
 #include <iostream>
 #include <vector>
 #include <string>
 #include <cstring>
 #include <map>
-
+#include <cmath>
 using namespace std;
 //Lưu từ điển 
 map<string, string> REG;
@@ -56,13 +12,23 @@ map<string, string> OPCODE;
 map<string, string> FUNCT;
 map<string, string> TYPE;
 
-string bin_to_hex(string bin);
-string binary_convert(string dec, int n);
+string hex_convert(string bin);
+string binary_convert(string s, int n);
+int decimal_convert(string& binary);
 string twoComplement(string b);
+bool check_in_dict(string s);
+
+string format_R(string op, string s1, string s2, string s3);
+string instruct_R(string op, string rs, string rt, string rd);
+string format_I(string op, string s1, string s2, string s3);
+string instruct_I(string op, string s1, string s2, string s3);
 
 void reg_dict();
+//Mảng để lưu giá trị thanh ghi dưới dạng int
+int register_value[32] = {0};
+
 //Hàm chuyển từ nhị phân sang thập lục phân
-string bin_to_hex(string bin) {
+string hex_convert(string bin) {
     string hex = "0x";
     for(int i = 0; i < bin.size(); i+=4) {
         int v = (bin[i] - '0') * 8 + (bin[i + 1] - '0') * 4 + (bin[i + 2] - '0') * 2 + (bin[i + 3] - '0') * 1;
@@ -77,17 +43,29 @@ string bin_to_hex(string bin) {
     return hex;
 }
 
-//Hàm chuyển từ thập phân sang nhị phân với độ dài n bit
+//Convert to n-bit binary string
 string binary_convert(string s, int n) {
     int dec = stoi(s);
     string bin;
     bin.reserve(n); // Reserve space to avoid reallocation
 
     for (int i = 0; i < n; ++i) {
-        bin = std::to_string(dec % 2) + bin;
+        bin = to_string(dec % 2) + bin;
         dec /= 2;
     }
+
     return bin;
+}
+
+int decimal_convert(string& binary) {
+    int decimal = 0, power = 0;
+    for (int i = binary.length() - 1; i >= 0; --i) {
+        if (binary[i] == '1') {
+            decimal += pow(2, power);
+        }
+        ++power;
+    }
+    return decimal;
 }
 
 //Hàm chuyển bù 2
@@ -109,26 +87,64 @@ string twoComplement(string b) {
     return b2;
 }
 
-//Kiểm tra xem từ có nằm trong từ điển không (nếu không là số nguyên)
 bool check_in_dict(string s){
-    auto it = REG.find(s);
-    if (it != REG.end()){
+    auto it = OPCODE.find(s);
+    if (it != OPCODE.end()){
         return true;
     }
     else return false;
 }
 
-//Trả về dạng của type I và type R
-//Input có dạng: add $s3, $s1, $s2
+//add $s3, $s1, $s2
 string format_R(string op, string s1, string s2, string s3){
     string format = OPCODE[op] + REG[s1] + REG[s2] + REG[s3] + "00000" + FUNCT[op];
     return format;
 }
 
-//Input có dạng: addi $s3, $s1, $s2->n value
+string instruct_R(string op, string rs, string rt, string rd){
+    string ins;
+    if (check_in_dict(op) == true) ins = op;
+    if (ins == "add" || ins == "addu") {
+        register_value[decimal_convert(REG[rd])] = register_value[decimal_convert(REG[rs])] + register_value[decimal_convert(REG[rt])];
+    }
+    if (ins == "and"){
+
+    }
+    if (ins == "jr"){
+
+    }
+    if (ins == "nor"){
+
+    }
+    if (ins == "or"){
+
+    }
+    if (ins == "slt"){
+
+    }
+    if (ins == "sltu"){
+
+    }
+    if (ins == "sll"){
+
+    }
+    if (ins == "srl"){
+
+    }
+    if (ins == "sub" || ins == "subu"){
+        register_value[decimal_convert(REG[rd])] = register_value[decimal_convert(REG[rs])] - register_value[decimal_convert(REG[rt])];
+    }
+
+    return format_R(op, rs, rt, rd);
+}
+//addi $s3, $s1, $s2->n value
 string format_I(string op, string s1, string s2, string s3){
     string format = OPCODE[op] + REG[s1] + REG[s2] + binary_convert(s3, 16);
     return format;
+}
+
+string instruct_I(){
+    return "a";
 }
 
 //Từ điển của MIPS
