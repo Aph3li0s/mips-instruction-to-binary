@@ -1,3 +1,47 @@
+//Sử dụng để lưu từ điển
+//Xác định loại lệnh (R hay I), chuyển các mã lệnh thành binary code
+//Viết thêm 1 hàm chuyển từ binary sang hex để dễ đối chiếu hơn
+
+/*
+    y tuong
+    moi lan xet 1 dong lenh
+    
+    // neu la lenh R
+    if(TYPE[words[0]] == "R") {
+            // Struct: OPCODE + RS + RT + RD + SHAMT + FUNCT
+            if(words[0] == "sll" || words[0] == "srl") {
+                // TODO
+                // These cases: RS = 00000, RD = words[1], RT = words[2], SHAMT = TO_BIN_5(words[3])
+            }
+
+            else if(words[0] == "jr") {
+                // chua biet lam
+            }
+
+            else {
+                // Theses cases: RS = words[2], RT = words[3], RD = words[1], SHAMT = 00000
+
+                // case 1: words[3] is not a number - words[3] is register.
+                // eg. add $s1, $s2, $s3
+                if(REG.find(words[3]) != REG.end()) {
+                    string SHAMT = "00000";
+                    binCode = OPCODE[words[0]] + REG[words[2]] + REG[words[3]] + REG[words[1]] + SHAMT + FUNCT[words[0]];
+                    cout << binCode << endl;
+                }
+
+                // case 2: words[3] is a number. 
+                // eg. add $s1, $s2, 10
+                else {
+                    // subcase 1: is a non-negative number (words[3] >= 0)
+
+                    // subcase 2: is a negative number (words[3] < 0) bieu dien dang bu 2 - ham twocompletement
+                }
+            }
+        }
+        else {  // TYPE I
+            // TODO
+        }
+*/
 #include "instruction.h"
 #include <iostream>
 #include <vector>
@@ -88,15 +132,24 @@ string twoComplement(string b) {
 }
 
 bool check_in_dict(string s){
-    auto it = OPCODE.find(s);
-    if (it != OPCODE.end()){
+    auto it = REG.find(s);
+    if (it != REG.end()){
         return true;
     }
     else return false;
 }
 
-//add $s3, $s1, $s2
+//Trả về dạng của type I và type R
+//Input có dạng: add $s3, $s1, $s2
 string format_R(string op, string s1, string s2, string s3){
+    /*
+        nên là:
+            check op : nếu op là sll / srl thì trường shamt khác "00000", mà thay vào
+                       đó là độ dời bit dịch: từ 0 - 31
+                       Khi này, format = op + "00000" + s1 + s3 + shamt + funct
+                          
+                       Các trường hợp khác thì mới có công thức như dưới
+    */
     string format = OPCODE[op] + REG[s1] + REG[s2] + REG[s3] + "00000" + FUNCT[op];
     return format;
 }
@@ -139,6 +192,11 @@ string instruct_R(string op, string rs, string rt, string rd){
 }
 //addi $s3, $s1, $s2->n value
 string format_I(string op, string s1, string s2, string s3){
+    /*
+        phải check trước s3 là số âm hay dương
+        nếu s3 là số âm thì phải chuyển sang biểu diễn dạng bù 2
+        nếu s3 là số dương/0 thì mới dùng công thức ở bên dưới
+    */
     string format = OPCODE[op] + REG[s1] + REG[s2] + binary_convert(s3, 16);
     return format;
 }
