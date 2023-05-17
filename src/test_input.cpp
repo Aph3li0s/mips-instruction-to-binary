@@ -85,14 +85,20 @@ string twoComplement(string b) {
     return b2;
 }
 
-bool check_in_dict(string s){
+bool check_opcode(string s){
     auto it = OPCODE.find(s);
     if (it != OPCODE.end()){
         return true;
     }
     else return false;
 }
-
+bool check_rt(string s){
+    auto it = REG.find(s);
+    if (it != REG.end()){
+        return true;
+    }
+    else return false;
+}
 //add $s3, $s1, $s2
 /*
     nên là:
@@ -101,40 +107,51 @@ bool check_in_dict(string s){
         Khi này, format = op + "00000" + s1 + s3 + shamt + funct
         Các trường hợp khác thì mới có công thức như dưới
 */
-string format_R(string op, string s1, string s2, string s3){
-    string format = OPCODE[op] + REG[s1] + REG[s2] + REG[s3] + "00000" + FUNCT[op];
+string format_R(string op, string rs, string rt, string rd, string shamt = "00000"){
+    string format = OPCODE[op] + REG[rs] + REG[rt] + REG[rd] + shamt + FUNCT[op];
     return format;
 }
 
 string instruct_R(string op, string rs, string rt, string rd){
     string ins;
-    if (check_in_dict(op) == true) ins = op;
+    if (check_opcode(op) == true) ins = op;
+    if (check_rt(rt) == false){
+        if (ins == "sll"){
+            register_value[decimal_convert(REG[rd])] = 
+            register_value[decimal_convert(REG[rs])] << stoi(rt);
+            string shamt = binary_convert(rt, 5);
+            return format_R(op, "$zero", rs, rd, shamt);
+        }
+        if (ins == "srl"){
+            register_value[decimal_convert(REG[rd])] = 
+            register_value[decimal_convert(REG[rs])] >> stoi(rt);
+            string shamt = binary_convert(rt, 5);
+            return format_R(op, "$zero", rs, rd, shamt);
+        }
+    }
     if (ins == "add" || ins == "addu") {
         register_value[decimal_convert(REG[rd])] = register_value[decimal_convert(REG[rs])] + register_value[decimal_convert(REG[rt])];
     }
     if (ins == "and"){
-
+        register_value[decimal_convert(REG[rd])] = register_value[decimal_convert(REG[rs])] & register_value[decimal_convert(REG[rt])];
     }
     if (ins == "jr"){
-
+        //Cái này là lệnh jump
     }
     if (ins == "nor"){
-
+        register_value[decimal_convert(REG[rd])] = !(register_value[decimal_convert(REG[rs])] || register_value[decimal_convert(REG[rt])]);
     }
     if (ins == "or"){
-
+        register_value[decimal_convert(REG[rd])] = register_value[decimal_convert(REG[rs])] || register_value[decimal_convert(REG[rt])];
     }
     if (ins == "slt"){
+        (register_value[decimal_convert(REG[rs])] < register_value[decimal_convert(REG[rt])]) ?
+        register_value[decimal_convert(REG[rd])] = 1 : register_value[decimal_convert(REG[rd])] = 0;
 
     }
     if (ins == "sltu"){
-
-    }
-    if (ins == "sll"){
-
-    }
-    if (ins == "srl"){
-
+        abs(register_value[decimal_convert(REG[rs])]) < abs(register_value[decimal_convert(REG[rt])]) ?
+        register_value[decimal_convert(REG[rd])] = 1 : register_value[decimal_convert(REG[rd])] = 0;
     }
     if (ins == "sub" || ins == "subu"){
         register_value[decimal_convert(REG[rd])] = register_value[decimal_convert(REG[rs])] - register_value[decimal_convert(REG[rt])];
@@ -160,7 +177,7 @@ string instruct_I(){
 int main() {
     init();
     //Đọc file và xuất file
-    fstream fi("../in_out/input/test2.txt");
+    fstream fi("../in_out/input/test3.txt");
     fstream fo("../in_out/output.txt");
     string tmp;
     
@@ -178,15 +195,16 @@ int main() {
         cout << endl;
         string output;
         //Thêm giá trị vào thanh ghi
-        register_value[17] = 3;
-        register_value[18] = 5;
+        register_value[17] = 30; //0011
+        register_value[18] = 5; //0101
 
         if (TYPE[words[0]] == "R") output = instruct_R(words[0], words[2], words[3], words[1]);
         else output = instruct_I();
         
         //Thử in giá trị thanh ghi sau khi thực hiện lệnh add
-        cout << register_value[decimal_convert(REG[words[1]])] << "\n";
-        cout << hex_convert(output) << "\n";
+        cout << "rd register value: " <<register_value[decimal_convert(REG[words[1]])] << "\n";
+        cout << "Hex address: " << hex_convert(output) << "\n";
+        cout << "binary length: " << output.length();
     }
 }
 //add $s3, $s1, $s2
@@ -252,7 +270,6 @@ void init() {
     REG["$sp"] = "11101";
     REG["$fp"] = "11110";
     REG["$ra"] = "11111"; //31
-
     // OPCODE
     OPCODE["add"] = "000000";
     OPCODE["addu"] = "000000";

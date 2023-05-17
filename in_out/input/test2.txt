@@ -1,1 +1,3 @@
 sub $s3, $s1, $s2
+and $s3, $s1, $s2
+slt $s3, $s1, $s2
