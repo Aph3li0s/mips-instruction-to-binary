@@ -2,6 +2,8 @@
 #include "instruction.h"
 using namespace std;
 
+// Xóa các cmt, kí tự dư thừa, tokenize các từ và quăng vào vector
+//Nghĩ thêm được test nào chứa các ngoại lệ thì thêm vào 
 vector<string> restructure(char code[255]) {
     vector<string> formatted_str;
     auto k = strtok(code, " ,\t");
@@ -20,6 +22,7 @@ void txt_convert(){
     ifstream fin("../in_out/testcases/test1.asm");
     ofstream fout("../in_out/input/test1.txt", ios_base::trunc);
     if (!fin) cout << "Can't open file";
+
     string str_read;
     while (getline(fin, str_read)) {
         fout << str_read;
@@ -33,6 +36,7 @@ void read_txt(){
     ifstream fin("../in_out/input/test1.txt");
     ofstream fout("../in_out/output/test1.txt", ios_base::trunc);
     if (!fin) cout << "Can't open file";
+
     string str_read;
     while (getline(fin, str_read)){
         vector<string> words;
@@ -41,7 +45,7 @@ void read_txt(){
         words = restructure(c_str);
         if(!words.size()) continue;
         
-        // test ket qua
+        // Test phần chuẩn hóa input
         for(auto &word : words) {
             cout << word << " ";
         }

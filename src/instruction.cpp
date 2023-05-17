@@ -38,13 +38,10 @@
                 }
             }
         }
-
         else {  // TYPE I
             // TODO
         }
-
 */
-
 #include "instruction.h"
 #include <iostream>
 #include <vector>
@@ -53,32 +50,18 @@
 #include <map>
 
 using namespace std;
-
+//Lưu từ điển 
 map<string, string> REG;
 map<string, string> OPCODE;
 map<string, string> FUNCT;
 map<string, string> TYPE;
 
-void reg_dict();
-vector<string> restructure(char code[255]);
 string bin_to_hex(string bin);
-string toBin5(string n);
+string binary_convert(string dec, int n);
 string twoComplement(string b);
 
-vector<string> restructure(char code[255]) {
-    vector<string> _;
-    auto k = strtok(code, " ,\t");
-    while(k != NULL) {
-        if(*k == '#') break;
-        if(*k != '.') {
-            std::string str(k);
-            _.push_back(k);
-        }
-        k = strtok(NULL, " ,\t");
-    }
-    return _;
-}
-
+void reg_dict();
+//Hàm chuyển từ nhị phân sang thập lục phân
 string bin_to_hex(string bin) {
     string hex = "0x";
     for(int i = 0; i < bin.size(); i+=4) {
@@ -94,22 +77,20 @@ string bin_to_hex(string bin) {
     return hex;
 }
 
-string toBin5(string n) {
-    int n_ = stoi(n);
-    string bin = "";
-    bin = to_string(n_ % 2) + bin;
-    n_ /= 2;
-    bin = to_string(n_ % 2) + bin;
-    n_ /= 2;
-    bin = to_string(n_ % 2) + bin;
-    n_ /= 2;
-    bin = to_string(n_ % 2) + bin;
-    n_ /= 2;
-    bin = to_string(n_ % 2) + bin;
-    n_ /= 2;
+//Hàm chuyển từ thập phân sang nhị phân với độ dài n bit
+string binary_convert(string s, int n) {
+    int dec = stoi(s);
+    string bin;
+    bin.reserve(n); // Reserve space to avoid reallocation
+
+    for (int i = 0; i < n; ++i) {
+        bin = std::to_string(dec % 2) + bin;
+        dec /= 2;
+    }
     return bin;
 }
 
+//Hàm chuyển bù 2
 string twoComplement(string b) {
     bool found1 = false;
     string b2 = "";
@@ -128,6 +109,29 @@ string twoComplement(string b) {
     return b2;
 }
 
+//Kiểm tra xem từ có nằm trong từ điển không (nếu không là số nguyên)
+bool check_in_dict(string s){
+    auto it = REG.find(s);
+    if (it != REG.end()){
+        return true;
+    }
+    else return false;
+}
+
+//Trả về dạng của type I và type R
+//Input có dạng: add $s3, $s1, $s2
+string format_R(string op, string s1, string s2, string s3){
+    string format = OPCODE[op] + REG[s1] + REG[s2] + REG[s3] + "00000" + FUNCT[op];
+    return format;
+}
+
+//Input có dạng: addi $s3, $s1, $s2->n value
+string format_I(string op, string s1, string s2, string s3){
+    string format = OPCODE[op] + REG[s1] + REG[s2] + binary_convert(s3, 16);
+    return format;
+}
+
+//Từ điển của MIPS
 void reg_dict() {
     // type R
     TYPE["add"] = "R";

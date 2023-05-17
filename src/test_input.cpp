@@ -4,15 +4,68 @@ using namespace std;
 map<string, string> REG;
 map<string, string> OPCODE;
 map<string, string> FUNCT;
-
+map<string, string> TYPE;
 void init();
 vector<string> restructure(char code[255]);
 
+int register_value[32];
+
+
+string binaryToHex(string bin) {
+    string hex = "0x";
+    for(int i = 0; i < bin.size(); i+=4) {
+        int v = (bin[i] - '0') * 8 + (bin[i + 1] - '0') * 4 + (bin[i + 2] - '0') * 2 + (bin[i + 3] - '0') * 1;
+        if(v < 10) hex = hex + to_string(v);
+        else if(v == 10) hex = hex + 'a';
+        else if(v == 11) hex = hex + 'b';
+        else if(v == 12) hex = hex + 'c';
+        else if(v == 13) hex = hex + 'd';
+        else if(v == 14) hex = hex + 'e';
+        else hex = hex + 'f';
+    }
+    return hex;
+}
+
+//Convert to n-bit binary string
+string binary_convert(string s, int n) {
+    int dec = stoi(s);
+    string bin;
+    bin.reserve(n); // Reserve space to avoid reallocation
+
+    for (int i = 0; i < n; ++i) {
+        bin = std::to_string(dec % 2) + bin;
+        dec /= 2;
+    }
+
+    return bin;
+}
+
+bool check_in_dict(string s){
+    auto it = REG.find(s);
+    if (it != REG.end()){
+        return true;
+    }
+    else return false;
+}
+
+//add $s3, $s1, $s2
+string format_R(string op, string s1, string s2, string s3){
+    string format = OPCODE[op] + REG[s1] + REG[s2] + REG[s3] + "00000" + FUNCT[op];
+    return format;
+}
+
+//addi $s3, $s1, $s2->n value
+string format_I(string op, string s1, string s2, string s3){
+    string format = OPCODE[op] + REG[s1] + REG[s2] + binary_convert(s3, 16);
+    return format;
+}
+
 int main() {
-    init();\
+    init();
+    for (auto& i : register_value) i = 0;
     //Đọc file và xuất file
-    fstream fi("../testcases/test1.txt");
-    fstream fo("../output/output.txt");
+    fstream fi("../in_out/input/test1.txt");
+    fstream fo("../in_out/output.txt");
     string tmp;
     
     while(getline(fi, tmp)) {
@@ -27,16 +80,75 @@ int main() {
             cout << word << " ";
         }
         cout << endl;
-        
-        // test chuyen doi, vi du sub $t3 $t1 $t2
-        cout << OPCODE[words[0]] << REG[words[2]] << REG[words[3]] << REG[words[1]] << "00000" << FUNCT[words[0]];
-        // -> can viet if/else de xu li tung cau lenh giong nhu tren ...
-        // 00000001001010100101100000100010 -> dung
-        
+        string output;
+        if (check_in_dict(words[3]) == true){
+            output = format_R(words[0], words[2], words[3], words[1]);
+        }  else output = format_I("addi", words[2], words[1], words[3]);
+        cout << binaryToHex(output)<< "\n";
     }
 }
+//add $s3, $s1, $s2
+
 
 void init() {
+    // type R
+    TYPE["add"] = "R";
+    TYPE["addu"] = "R";
+    TYPE["and"] = "R";
+    TYPE["jr"] = "R";
+    TYPE["nor"] = "R";
+    TYPE["or"] = "R";
+    TYPE["slt"] = "R";
+    TYPE["sltu"] = "R";
+    TYPE["sll"] = "R";
+    TYPE["srl"] = "R";
+    TYPE["sub"] = "R";
+    TYPE["subu"] = "R";
+
+    // type I
+    TYPE["addi"] = "I";
+    TYPE["addiu"] = "I";
+    TYPE["andi"] = "I";
+    TYPE["beq"] = "I";
+    TYPE["bne"] = "I";
+    TYPE["lb"] = "I";
+    TYPE["lw"] = "I";
+    TYPE["ori"] = "I";
+    TYPE["sb"] = "I";
+    TYPE["sw"] = "I";
+    // REG["$zero"] = "1";
+    // REG["$at"] = "2";
+    // REG["$v0"] = "3";
+    // REG["$v1"] = "4";
+    // REG["$a0"] = "5";
+    // REG["$a1"] = "6";
+    // REG["$a2"] = "7";
+    // REG["$a3"] = "8";
+    // REG["$t0"] = "9";
+    // REG["$t1"] = "10";
+    // REG["$t2"] = "11";
+    // REG["$t3"] = "12";
+    // REG["$t4"] = "13";
+    // REG["$t5"] = "14";
+    // REG["$t6"] = "15";
+    // REG["$t7"] = "16";
+    // REG["$s0"] = "17";
+    // REG["$s1"] = "18";
+    // REG["$s2"] = "19";
+    // REG["$s3"] = "20";
+    // REG["$s4"] = "21";
+    // REG["$s5"] = "22";
+    // REG["$s6"] = "23";
+    // REG["$s7"] = "24";
+    // REG["$t8"] = "25";
+    // REG["$t9"] = "26";
+    // REG["$k0"] = "27";
+    // REG["$k1"] = "28";
+    // REG["$gp"] = "29";
+    // REG["$sp"] = "30";
+    // REG["$fp"] = "31";
+    // REG["$ra"] = "32";
+
     // reg
     REG["$zero"] = "00000";
     REG["$at"] = "00001";
