@@ -164,8 +164,26 @@ string format_I(string op, string s1, string s2, string s3){
     return format;
 }
 
-string instruct_I(){
-    return "a";
+string instruct_I(string op, string rs, string rt, string immediate){
+    string ins;
+    if (check_opcode(op) == true) ins = op;
+    if(ins == "beq" || ins == "bne") {
+        // chua biet lam
+    }
+
+    else if(ins == "lw" || ins == "sw") {
+        // chua biet lam
+    }
+
+    else if(ins == "lb" || ins == "sb") {
+        // chua biet lam
+    }
+
+    else {
+        // addi, addiu, andi, ori
+        return format_I(op, rs, rt, immediate);
+    }
+
 }
 
 //Từ điển của MIPS
