@@ -179,9 +179,18 @@ string instruct_I(string op, string rs, string rt, string immediate){
         // chua biet lam
     }
 
+    else if(ins == "addi" || ins == "addiu") {
+        if(stoi(immediate) < 0) {
+            // 
+        }
+
+        else {
+            // 
+        }
+    }
+
     else {
-        // addi, addiu, andi, ori
-        return format_I(op, rs, rt, immediate);
+        // andi, ori
     }
 
 }
