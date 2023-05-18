@@ -3,7 +3,7 @@
 using namespace std;
 
 // Xóa các cmt, kí tự dư thừa, tokenize các từ và quăng vào vector
-//Nghĩ thêm được test nào chứa các ngoại lệ thì thêm vào 
+//Nghĩ thêm được test nào chứa các ngoại lệ thì thêm vào
 vector<string> restructure(char code[255]) {
     vector<string> formatted_str;
     auto k = strtok(code, " ,\t");
@@ -41,6 +41,7 @@ void read_txt(){
     if (!fin) cout << "Can't open file";
 
     string str_read;
+    vector<vector<string>> lines;
     while (getline(fin, str_read)){
         vector<string> words;
         char* c_str = new char [str_read.size() + 1];
@@ -48,13 +49,11 @@ void read_txt(){
         words = restructure(c_str);
         if(!words.size()) continue;
         
-        // Test phần chuẩn hóa input
-        for(auto &word : words) {
-            cout << word << " ";
-        }
-        cout << endl;
+        //Chẻn words vào từng dòng để lấy thứ tự dòng
+        lines.push_back(words);
     }
 }
+    
 int main(){
     txt_convert();
     read_txt();
