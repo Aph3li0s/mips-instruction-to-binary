@@ -74,14 +74,15 @@ int main(){
         //else output = instruct_I();
         
         //Thử in giá trị thanh ghi sau khi thực hiện lệnh add
-        cout << "rd register value: " <<register_value[decimal_convert(REG[words[1]])] << "\n";
-        cout << "Binary address: " << output << "\n";
-        cout << "binary length: " << output.length() << "\n";
-        //cout << "Hex address: " << hex_convert(output) << "\n";
-        // Inner loop to iterate over each inner vector
         for (const auto& j : words) {
             cout << j << " ";
         }
+        cout << endl;
+        cout << "rd register value: " <<register_value[decimal_convert(REG[words[1]])] << "\n";
+        cout << "Bit length: " << output.length() << "\n";
+        cout << "Binary address: " << output << "\n";
+        cout << "Hex address: " << hex_convert(output) << "\n";
+
         cout << endl;
     }
 }
