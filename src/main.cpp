@@ -19,8 +19,8 @@ vector<string> restructure(char code[255]) {
 }
 
 void txt_convert(){
-    ifstream fin("../in_out/testcases/test2.asm");
-    ofstream fout("../in_out/input/test2.txt", ios_base::trunc);
+    ifstream fin("../in_out/testcases/test1.asm");
+    ofstream fout("../in_out/input/test1.txt", ios_base::trunc);
     if (!fin) cout << "Can't open file";
 
     string str_read;
@@ -31,17 +31,17 @@ void txt_convert(){
     fin.close();
     fout.close();
 }
-
+vector<vector<string>> lines;
 void read_txt(){
     //Lưu ý cho việc làm test case: 
     //Các instruction thì các tham số của nó bắt buộc nằm trên 1 dòng, tức là có \n là sai cú pháp
     
-    ifstream fin("../in_out/input/test2.txt");
-    ofstream fout("../in_out/output/test2.txt", ios_base::trunc);
+    ifstream fin("../in_out/input/test1.txt");
+    ofstream fout("../in_out/output/test1.txt", ios_base::trunc);
     if (!fin) cout << "Can't open file";
 
     string str_read;
-    vector<vector<string>> lines;
+
     while (getline(fin, str_read)){
         vector<string> words;
         char* c_str = new char [str_read.size() + 1];
@@ -61,4 +61,27 @@ void read_txt(){
 int main(){
     txt_convert();
     read_txt();
+    reg_dict();
+    size_t size = lines.size();
+    cout << "Size: " << size << "\n";
+    for (const auto& words : lines) {
+        string output;
+        //Thêm giá trị vào thanh ghi
+        register_value[17] = 3; //0011
+        register_value[18] = 5; //0101
+
+        if (TYPE[words[0]] == "R") output = instruct_R(words[0], words[2], words[3], words[1]);
+        //else output = instruct_I();
+        
+        //Thử in giá trị thanh ghi sau khi thực hiện lệnh add
+        cout << "rd register value: " <<register_value[decimal_convert(REG[words[1]])] << "\n";
+        cout << "Binary address: " << output << "\n";
+        cout << "binary length: " << output.length() << "\n";
+        //cout << "Hex address: " << hex_convert(output) << "\n";
+        // Inner loop to iterate over each inner vector
+        for (const auto& j : words) {
+            cout << j << " ";
+        }
+        cout << endl;
+    }
 }

@@ -1,8 +1,1 @@
-.text
-add $t1, $zero, 5
-add $t2,$zero, 2
-sub $t3, $t1, $t2
-sub $t3,,,,, $t1, $t2
-
-
-#This is some cmt
+add $s0, $s1, $s2

@@ -178,9 +178,9 @@ int main() {
     init();
     //Đọc file và xuất file
     fstream fi("../in_out/input/test2.txt");
-    fstream fo("../in_out/output.txt");
+    fstream fo("../in_out/output/test2.txt");
     string tmp;
-    
+    vector<vector<string>> lines;
     while(getline(fi, tmp)) {
         vector<string> words;
         char* c_str = new char [tmp.size() + 1];
@@ -188,11 +188,19 @@ int main() {
         words = restructure(c_str);
         if(!words.size()) continue;
         
+        lines.push_back(words);
         // test ket qua
         for(auto &word : words) {
             cout << word << " ";
         }
         cout << endl;
+        
+
+    }
+    //Lưu số dòng trong file input.txt
+    size_t size = lines.size();
+    cout << "Size: " << size << "\n";
+    for (const auto& words : lines) {
         string output;
         //Thêm giá trị vào thanh ghi
         //register_value[17] = 30; //0011
@@ -205,8 +213,12 @@ int main() {
         cout << "rd register value: " <<register_value[decimal_convert(REG[words[1]])] << "\n";
         cout << "Binary address: " << output << "\n";
         cout << "binary length: " << output.length() << "\n";
-        cout << "Hex address: " << hex_convert(output) << "\n";
-
+        //cout << "Hex address: " << hex_convert(output) << "\n";
+        // Inner loop to iterate over each inner vector
+        for (const auto& j : words) {
+            cout << j << " ";
+        }
+        cout << endl;
     }
 }
 //add $s3, $s1, $s2
