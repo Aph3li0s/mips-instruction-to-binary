@@ -23,7 +23,7 @@
   00000010: addi $s1, $s1, -1
   
   -> để tính immediate cho beq
-  b1: tính (địa chỉ của label(eee) = (địa chỉ hiện tại(dòng 2) + 4)) = 00000004
+  b1: tính (địa chỉ của label(eee) - (địa chỉ hiện tại(dòng 2) + 4)) = 00000004
   b2: chia cho 4 để ra offset: ta được 00000001 hay chính là 1
   b3: mở rộng thành số 16bit: 0000000000000001
   b4: chuyển về dạng bù 2, tuy nhiên TH này 1 > 0 nên không cần thực hiện
