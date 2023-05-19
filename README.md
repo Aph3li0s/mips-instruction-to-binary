@@ -2,7 +2,9 @@
 
 ## to-do list
 1. viết hàm chuyển từ hex -> dec
-2. để xử lí vấn đề địa chỉ: <br/>
+2. Viết hàm để đưa kq ra file output, 1 file dạng hex, 1 file dạng bin
+3. Chuẩn hoá lại src code, bỏ các hàm không dùng, ...
+4. để xử lí vấn đề địa chỉ: ĐÃ XONG <br/>
     + tạo 1 map<string, int> lưu tên label : địa chỉ line của label
     + tạo biến int PC để đếm địa chỉ dưới dạng dec, mỗi lần dọc 1 lệnh thì PC += 4
     + lần đọc đầu xoá kí tự thùa, lưu vào 1 vector chứa pair<int, vector<string>> lines
