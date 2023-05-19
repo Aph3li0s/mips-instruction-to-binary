@@ -177,7 +177,7 @@ string instruct_I(){
 int main() {
     init();
     //Đọc file và xuất file
-    fstream fi("../in_out/input/test3.txt");
+    fstream fi("../in_out/input/test2.txt");
     fstream fo("../in_out/output.txt");
     string tmp;
     
@@ -195,16 +195,18 @@ int main() {
         cout << endl;
         string output;
         //Thêm giá trị vào thanh ghi
-        register_value[17] = 30; //0011
-        register_value[18] = 5; //0101
+        //register_value[17] = 30; //0011
+        //register_value[18] = 5; //0101
 
         if (TYPE[words[0]] == "R") output = instruct_R(words[0], words[2], words[3], words[1]);
         else output = instruct_I();
         
         //Thử in giá trị thanh ghi sau khi thực hiện lệnh add
         cout << "rd register value: " <<register_value[decimal_convert(REG[words[1]])] << "\n";
+        cout << "Binary address: " << output << "\n";
+        cout << "binary length: " << output.length() << "\n";
         cout << "Hex address: " << hex_convert(output) << "\n";
-        cout << "binary length: " << output.length();
+
     }
 }
 //add $s3, $s1, $s2

@@ -19,8 +19,8 @@ vector<string> restructure(char code[255]) {
 }
 
 void txt_convert(){
-    ifstream fin("../in_out/testcases/test1.asm");
-    ofstream fout("../in_out/input/test1.txt", ios_base::trunc);
+    ifstream fin("../in_out/testcases/test2.asm");
+    ofstream fout("../in_out/input/test2.txt", ios_base::trunc);
     if (!fin) cout << "Can't open file";
 
     string str_read;
@@ -36,8 +36,8 @@ void read_txt(){
     //Lưu ý cho việc làm test case: 
     //Các instruction thì các tham số của nó bắt buộc nằm trên 1 dòng, tức là có \n là sai cú pháp
     
-    ifstream fin("../in_out/input/test1.txt");
-    ofstream fout("../in_out/output/test1.txt", ios_base::trunc);
+    ifstream fin("../in_out/input/test2.txt");
+    ofstream fout("../in_out/output/test2.txt", ios_base::trunc);
     if (!fin) cout << "Can't open file";
 
     string str_read;
@@ -51,6 +51,10 @@ void read_txt(){
         
         //Chẻn words vào từng dòng để lấy thứ tự dòng
         lines.push_back(words);
+    }
+    for(auto &i : lines) {
+        for (auto &j : i) fout << j << " ";
+        fout << "\n";
     }
 }
     

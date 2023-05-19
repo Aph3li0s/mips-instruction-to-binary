@@ -85,6 +85,7 @@ string twoComplement(string b) {
 
 //Các hàm check xem opcode và thanh ghi có trong map hay ko
 bool check_opcode(string s){
+    //Kiểm tra xem từ s có trong OPCODE ko
     auto it = OPCODE.find(s);
     if (it != OPCODE.end()){
         return true;
