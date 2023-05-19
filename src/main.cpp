@@ -6,14 +6,14 @@ using namespace std;
 //Nghĩ thêm được test nào chứa các ngoại lệ thì thêm vào
 vector<string> restructure(char code[255]) {
     vector<string> formatted_str;
-    auto k = strtok(code, " ,\t()");
+    auto k = strtok(code, " ,\t():");
     while(k != NULL) {
         if(*k == '#') break;
         if(*k != '.') {
             std::string str(k);
             formatted_str.push_back(k);
         }
-        k = strtok(NULL, " ,\t()");
+        k = strtok(NULL, " ,\t():");
     }
     return formatted_str;
 }
@@ -31,7 +31,11 @@ void txt_convert(){
     fin.close();
     fout.close();
 }
-vector<vector<string>> lines;
+
+vector<pair<int, vector<string>>> lines;
+map<string, int> labelAddress;
+int PC = 0;
+
 void read_txt(){
     //Lưu ý cho việc làm test case: 
     //Các instruction thì các tham số của nó bắt buộc nằm trên 1 dòng, tức là có \n là sai cú pháp
@@ -50,10 +54,19 @@ void read_txt(){
         if(!words.size()) continue;
         
         //Chẻn words vào từng dòng để lấy thứ tự dòng
-        lines.push_back(words);
+        lines.push_back({PC, words});
+        
+        if(words.size() == 1) {
+            // neu la label, them vao map cho de~ truy xuat
+            labelAddress.insert({words[0], PC});
+        }
+        PC += 4;
     }
-    for(auto &i : lines) {
-        for (auto &j : i) fout << j << " ";
+    
+    for(auto &line : lines) {
+        // khuc nay van la int, chua chuyen sang hex
+        fout << line.first << ": ";
+        for (auto &j : line.second) fout << j << " ";
         fout << "\n";
     }
 }
