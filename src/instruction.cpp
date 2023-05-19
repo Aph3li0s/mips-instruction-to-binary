@@ -159,38 +159,56 @@ string instruct_R(string op, string rs, string rt, string rd){
         nếu s3 là số âm thì phải chuyển sang biểu diễn dạng bù 2
         nếu s3 là số dương/0 thì mới dùng công thức ở bên dưới
     */
-string format_I(string op, string s1, string s2, string s3){
-    string format = OPCODE[op] + REG[s1] + REG[s2] + binary_convert(s3, 16);
-    return format;
-}
 
-string instruct_I(string op, string rs, string rt, string immediate){
+// tam thoi bo?
+// string format_I(string op, string s1, string s2, string s3){
+//     string format = OPCODE[op] + REG[s1] + REG[s2] + binary_convert(s3, 16);
+//     return format;
+// }
+
+string instruct_I(vector<string> &words){
     string ins;
-    if (check_opcode(op) == true) ins = op;
+    if (check_opcode(words[0]) == true) ins = words[0];
     if(ins == "beq" || ins == "bne") {
         // chua biet lam
+        return "a";
     }
 
     else if(ins == "lw" || ins == "sw") {
-        // chua biet lam
+        // op: words[0], rt = words[1], imme = words[2], rs = words[3]
+        string opcode, rs, rt, immediate;
+        opcode = OPCODE[words[0]]; rs = REG[words[3]]; rt = REG[words[1]]; immediate = words[2];
+        if(stoi(immediate) < 0) {
+            auto immediate16Bit = binary_convert(to_string(abs(stoi(immediate))), 16);
+            auto twoComplementImmediate16Bit = twoComplement(immediate16Bit);
+            return opcode + rs + rt + twoComplementImmediate16Bit;
+        }
+        else {
+            auto immediate16Bit = binary_convert(immediate, 16);
+            return opcode + rs + rt + immediate16Bit;
+        }
     }
 
     else if(ins == "lb" || ins == "sb") {
         // chua biet lam
+        return "a";
     }
 
     else if(ins == "addi" || ins == "addiu") {
-        if(stoi(immediate) < 0) {
+        if(stoi() < 0) {
             // 
+            return "a";
         }
 
         else {
             // 
+            return "a";
         }
     }
 
     else {
         // andi, ori
+        return "a";
     }
 
 }
