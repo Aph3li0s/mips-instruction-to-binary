@@ -12,12 +12,13 @@ string hex_convert(string bin);
 string binary_convert(string s, int n);
 int decimal_convert(string& binary);
 string twoComplement(string b);
-bool check_in_dict(string s);
+bool check_in_dict(string s);                            // Sao hàm này không có khai báo bên dưới nè
 
 string format_R(string op, string rs, string rt, string rd, string shamt);
 string instruct_R(string op, string rs, string rt, string rd);
-string format_I(string op, string s1, string s2, string s3);
-string instruct_I(string op, string s1, string s2, string s3);
+// string format_I(string op, string s1, string s2, string s3);  // Tạm thời không đi theo hướng này
+// string instruct_I(string op, string s1, string s2, string s3); // Chuyển thành hàm dưới
+string instruct_I(vector<string> &words);
 
 void reg_dict();
 //Mảng để lưu giá trị thanh ghi dưới dạng int
@@ -48,7 +49,6 @@ string binary_convert(string s, int n) {
         bin = to_string(dec % 2) + bin;
         dec /= 2;
     }
-
     return bin;
 }
 
@@ -91,6 +91,7 @@ bool check_opcode(string s){
     }
     else return false;
 }
+
 bool check_rt(string s){
     auto it = REG.find(s);
     if (it != REG.end()){
@@ -131,6 +132,8 @@ string instruct_R(string op, string rs, string rt, string rd){
     }
     if (ins == "jr"){
         //Cái này là lệnh jump
+        // rs = words[1], op = words[0]. Các trường rt, rd, shamt = 0
+        // nên return riêng
     }
     if (ins == "nor"){
         register_value[decimal_convert(REG[rd])] = !(register_value[decimal_convert(REG[rs])] || register_value[decimal_convert(REG[rt])]);
@@ -153,12 +156,6 @@ string instruct_R(string op, string rs, string rt, string rd){
 
     return format_R(op, rs, rt, rd);
 }
-//addi $s3, $s1, $s2->n value
-    /*
-        phải check trước s3 là số âm hay dương
-        nếu s3 là số âm thì phải chuyển sang biểu diễn dạng bù 2
-        nếu s3 là số dương/0 thì mới dùng công thức ở bên dưới
-    */
 
 // tam thoi bo?
 // string format_I(string op, string s1, string s2, string s3){
@@ -174,7 +171,7 @@ string instruct_I(vector<string> &words){
         return "a";
     }
 
-    else if(ins == "lw" || ins == "sw") {
+    if(ins == "lw" || ins == "sw") {
         // op: words[0], rt = words[1], imme = words[2], rs = words[3]
         string opcode, rs, rt, immediate;
         opcode = OPCODE[words[0]]; rs = REG[words[3]]; rt = REG[words[1]]; immediate = words[2];
@@ -189,28 +186,25 @@ string instruct_I(vector<string> &words){
         }
     }
 
-    else if(ins == "lb" || ins == "sb") {
+    if(ins == "lb" || ins == "sb") {
         // chua biet lam
         return "a";
     }
 
-    else if(ins == "addi" || ins == "addiu") {
-        if(stoi() < 0) {
-            // 
-            return "a";
+    if(ins == "addi" || ins == "addiu" || ins == "andi" || ins == "ori") {
+        string opcode, rs, rt, immediate;
+        opcode = OPCODE[words[0]]; rs = REG[words[2]]; rt = REG[words[1]]; immediate = words[3];
+        if(stoi(immediate) < 0) {
+            auto immediate16Bit = binary_convert(to_string(abs(stoi(immediate))), 16);
+            auto twoComplementImmediate16Bit = twoComplement(immediate16Bit);
+            return opcode + rs + rt + twoComplementImmediate16Bit;
         }
 
         else {
-            // 
-            return "a";
+            auto immediate16Bit = binary_convert(immediate, 16);
+            return opcode + rs + rt + immediate16Bit;
         }
     }
-
-    else {
-        // andi, ori
-        return "a";
-    }
-
 }
 
 //Từ điển của MIPS
