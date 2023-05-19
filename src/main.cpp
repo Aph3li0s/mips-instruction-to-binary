@@ -63,6 +63,7 @@ int main(){
     read_txt();
     reg_dict();
     size_t size = lines.size();
+    
     cout << "Size: " << size << "\n";
     for (const auto& words : lines) {
         string output;
