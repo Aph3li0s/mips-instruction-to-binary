@@ -68,10 +68,16 @@ int main(){
     for (const auto& words : lines) {
         string output;
         //Thêm giá trị vào thanh ghi
-        register_value[17] = 3; //0011
-        register_value[18] = 5; //0101
-
-        if (TYPE[words[0]] == "R") output = instruct_R(words[0], words[2], words[3], words[1]);
+        // register_value[17] = 3; //0011
+        // register_value[18] = 5; //0101
+        if (TYPE[words[0]] == "R") {
+            if (words[0] == "jr"){
+                output = OPCODE[words[0]] + REG[words[1]] + REG["$zero"] + REG["$zero"] + "00000" + FUNCT[words[0]];
+            }
+            else{
+                output = instruct_R(words[0], words[2], words[3], words[1]);
+            }
+        }
         //else output = instruct_I();
         
         //Thử in giá trị thanh ghi sau khi thực hiện lệnh add

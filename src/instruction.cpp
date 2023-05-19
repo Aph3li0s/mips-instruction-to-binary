@@ -135,11 +135,6 @@ string instruct_R(string op, string rs, string rt, string rd){
     if (ins == "and"){
         register_value[decimal_convert(REG[rd])] = register_value[decimal_convert(REG[rs])] & register_value[decimal_convert(REG[rt])];
     }
-    if (ins == "jr"){
-        //Cái này là lệnh jump
-        // rs = words[1], op = words[0]. Các trường rt, rd, shamt = 0
-        // nên return riêng
-    }
     if (ins == "nor"){
         register_value[decimal_convert(REG[rd])] = !(register_value[decimal_convert(REG[rs])] || register_value[decimal_convert(REG[rt])]);
     }
@@ -199,6 +194,15 @@ string instruct_I(vector<string> &words){
     if(ins == "addi" || ins == "addiu" || ins == "andi" || ins == "ori") {
         string opcode, rs, rt, immediate;
         opcode = OPCODE[words[0]]; rs = REG[words[2]]; rt = REG[words[1]]; immediate = words[3];
+        if (ins == "addi" || "addiu"){
+            register_value[decimal_convert(REG[rs])] = register_value[decimal_convert(REG[rt])] + stoi(words[3]);
+        }
+        if (ins == "andi"){
+            register_value[decimal_convert(REG[rs])] = register_value[decimal_convert(REG[rt])] & stoi(words[3]);
+        }
+        if (ins == "ori"){
+            register_value[decimal_convert(REG[rs])] = register_value[decimal_convert(REG[rt])] || stoi(words[3]);
+        }
         if(stoi(immediate) < 0) {
             auto immediate16Bit = binary_convert(to_string(abs(stoi(immediate))), 16);
             auto twoComplementImmediate16Bit = twoComplement(immediate16Bit);
