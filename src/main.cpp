@@ -6,14 +6,14 @@ using namespace std;
 //Nghĩ thêm được test nào chứa các ngoại lệ thì thêm vào
 vector<string> restructure(char code[255]) {
     vector<string> formatted_str;
-    auto k = strtok(code, " ,\t()");
+    auto k = strtok(code, " ,\t():");
     while(k != NULL) {
         if(*k == '#') break;
         if(*k != '.') {
             std::string str(k);
             formatted_str.push_back(k);
         }
-        k = strtok(NULL, " ,\t()");
+        k = strtok(NULL, " ,\t():");
     }
     return formatted_str;
 }
@@ -31,13 +31,17 @@ void txt_convert(){
     fin.close();
     fout.close();
 }
-vector<vector<string>> lines;
+
+vector<pair<int, vector<string>>> lines;
+map<string, int> labelsAddress;
+int PC = 0;
+
 void read_txt(){
     //Lưu ý cho việc làm test case: 
     //Các instruction thì các tham số của nó bắt buộc nằm trên 1 dòng, tức là có \n là sai cú pháp
     
-    ifstream fin("../in_out/input/test1.txt");
-    ofstream fout("../in_out/output/test1.txt", ios_base::trunc);
+    ifstream fin("../in_out/input/test2.txt");
+    ofstream fout("../in_out/output/test2.txt", ios_base::trunc);
     if (!fin) cout << "Can't open file";
 
     string str_read;
@@ -50,10 +54,19 @@ void read_txt(){
         if(!words.size()) continue;
         
         //Chẻn words vào từng dòng để lấy thứ tự dòng
-        lines.push_back(words);
+        lines.push_back({PC, words});
+
+        if(words.size() == 1) {
+            // neu la label, them vao map cho de~ truy xuat
+            labelsAddress.insert({words[0], PC});
+        }
+        else PC += 4;
     }
-    for(auto &i : lines) {
-        for (auto &j : i) fout << j << " ";
+
+    for(auto &line : lines) {
+        // khuc nay van la int, chua chuyen sang hex
+        fout << line.first << ": ";
+        for (auto &j : line.second) fout << j << " ";
         fout << "\n";
     }
 }
@@ -63,22 +76,25 @@ int main(){
     read_txt();
     reg_dict();
     size_t size = lines.size();
-    
     cout << "Size: " << size << "\n";
-    for (const auto& words : lines) {
+    for (const auto& line : lines) {
+        if(line.second.size() == 1) continue;
         string output;
         //Thêm giá trị vào thanh ghi
-        // register_value[17] = 3; //0011
-        // register_value[18] = 5; //0101
-        if (TYPE[words[0]] == "R") {
-            if (words[0] == "jr"){
-                output = OPCODE[words[0]] + REG[words[1]] + REG["$zero"] + REG["$zero"] + "00000" + FUNCT[words[0]];
-            }
-            else{
-                output = instruct_R(words[0], words[2], words[3], words[1]);
-            }
-        }
-        //else output = instruct_I();
+        register_value[17] = 3; //0011
+        register_value[18] = 5; //0101
+
+        auto lineAddress = line.first;
+        auto words = line.second;
+
+        // for(auto &m : words) {
+        //     cout << m << " ";
+        // }
+        // cout << endl;
+
+
+        if (TYPE[words[0]] == "R") output = instruct_R(words[0], words[2], words[3], words[1]);
+        else output = instruct_I(words, lineAddress, labelsAddress);
         
         //Thử in giá trị thanh ghi sau khi thực hiện lệnh add
         for (const auto& j : words) {

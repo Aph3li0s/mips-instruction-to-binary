@@ -17,13 +17,13 @@ int decimal_convert(string& binary);
 string twoComplement(string b);
 bool check_opcode(string s);
 bool check_rt(string s);
-string instruct_I(vector<string> &words);                           // Sao hàm này không có khai báo bên dưới nè
+bool check_in_dict(string s);                            // Sao hàm này không có khai báo bên dưới nè
 
 string format_R(string op, string rs, string rt, string rd, string shamt);
 string instruct_R(string op, string rs, string rt, string rd);
 // string format_I(string op, string s1, string s2, string s3);  // Tạm thời không đi theo hướng này
 // string instruct_I(string op, string s1, string s2, string s3); // Chuyển thành hàm dưới
-string instruct_I(vector<string> &words);
+string instruct_I(vector<string> &words, int PC, map<string, int> labelsAddress);
 
 void reg_dict();
 
@@ -135,6 +135,11 @@ string instruct_R(string op, string rs, string rt, string rd){
     if (ins == "and"){
         register_value[decimal_convert(REG[rd])] = register_value[decimal_convert(REG[rs])] & register_value[decimal_convert(REG[rt])];
     }
+    if (ins == "jr"){
+        //Cái này là lệnh jump
+        // rs = words[1], op = words[0]. Các trường rt, rd, shamt = 0
+        // nên return riêng
+    }
     if (ins == "nor"){
         register_value[decimal_convert(REG[rd])] = !(register_value[decimal_convert(REG[rs])] || register_value[decimal_convert(REG[rt])]);
     }
@@ -163,12 +168,24 @@ string instruct_R(string op, string rs, string rt, string rd){
 //     return format;
 // }
 
-string instruct_I(vector<string> &words){
+string instruct_I(vector<string> &words, int PC, map<string, int> labelsAddress){
     string ins;
     if (check_opcode(words[0]) == true) ins = words[0];
     if(ins == "beq" || ins == "bne") {
-        // chua biet lam
-        return "a";
+        // cac reg khong doi vi tri
+        string opcode, rs, rt, label;
+        opcode = OPCODE[words[0]]; rs = REG[words[1]]; rt = REG[words[2]]; label = words[3];
+        auto labelAddr = labelsAddress[label];
+        auto immediate = (labelAddr - PC - 4) / 4;
+        if(immediate < 0) {
+            auto immediate16Bit = binary_convert(to_string(abs(immediate)), 16);
+            auto twoComplementImmediate16Bit = twoComplement(immediate16Bit);
+            return opcode + rs + rt + twoComplementImmediate16Bit;
+        }
+        else {
+            auto immediate16Bit = binary_convert(to_string(immediate), 16);
+            return opcode + rs + rt + immediate16Bit;
+        }
     }
 
     if(ins == "lw" || ins == "sw") {
@@ -194,15 +211,6 @@ string instruct_I(vector<string> &words){
     if(ins == "addi" || ins == "addiu" || ins == "andi" || ins == "ori") {
         string opcode, rs, rt, immediate;
         opcode = OPCODE[words[0]]; rs = REG[words[2]]; rt = REG[words[1]]; immediate = words[3];
-        if (ins == "addi" || "addiu"){
-            register_value[decimal_convert(REG[rs])] = register_value[decimal_convert(REG[rt])] + stoi(words[3]);
-        }
-        if (ins == "andi"){
-            register_value[decimal_convert(REG[rs])] = register_value[decimal_convert(REG[rt])] & stoi(words[3]);
-        }
-        if (ins == "ori"){
-            register_value[decimal_convert(REG[rs])] = register_value[decimal_convert(REG[rt])] || stoi(words[3]);
-        }
         if(stoi(immediate) < 0) {
             auto immediate16Bit = binary_convert(to_string(abs(stoi(immediate))), 16);
             auto twoComplementImmediate16Bit = twoComplement(immediate16Bit);

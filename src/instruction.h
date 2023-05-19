@@ -18,7 +18,7 @@ bool check_rt(std::string s);
 bool check_in_dict(std::string s);
 std::string format_R(std::string op, std::string rs, std::string rt, std::string rd, std::string shamt);
 std::string instruct_R(std::string op, std::string rs, std::string rt, std::string rd);
-std::string instruct_I(std::vector<std::string>& words);
+std::string instruct_I(std::vector<std::string> &words, int PC, std::map<std::string, int> labelsAddress);
 
 void reg_dict();
 
