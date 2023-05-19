@@ -1,3 +1,4 @@
-add $s0 $s1 $s2 
-sub $s0 $s2 $s1 
-sll $s0 $s1 2 
+0: add $s0 $s1 $s2 
+4: jr $s0 
+8: sub $s0 $s2 $s1 
+12: sll $s0 $s1 2 

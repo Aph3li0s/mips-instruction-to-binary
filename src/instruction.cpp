@@ -135,11 +135,6 @@ string instruct_R(string op, string rs, string rt, string rd){
     if (ins == "and"){
         register_value[decimal_convert(REG[rd])] = register_value[decimal_convert(REG[rs])] & register_value[decimal_convert(REG[rt])];
     }
-    if (ins == "jr"){
-        //Cái này là lệnh jump
-        // rs = words[1], op = words[0]. Các trường rt, rd, shamt = 0
-        // nên return riêng
-    }
     if (ins == "nor"){
         register_value[decimal_convert(REG[rd])] = !(register_value[decimal_convert(REG[rs])] || register_value[decimal_convert(REG[rt])]);
     }
@@ -161,13 +156,6 @@ string instruct_R(string op, string rs, string rt, string rd){
 
     return format_R(op, rs, rt, rd);
 }
-
-// tam thoi bo?
-// string format_I(string op, string s1, string s2, string s3){
-//     string format = OPCODE[op] + REG[s1] + REG[s2] + binary_convert(s3, 16);
-//     return format;
-// }
-
 string instruct_I(vector<string> &words, int PC, map<string, int> labelsAddress){
     string ins;
     if (check_opcode(words[0]) == true) ins = words[0];
@@ -188,7 +176,7 @@ string instruct_I(vector<string> &words, int PC, map<string, int> labelsAddress)
         }
     }
 
-    if(ins == "lw" || ins == "sw") {
+    if(ins == "lw" || ins == "sw" || ins == "lb" || ins == "sb") {
         // op: words[0], rt = words[1], imme = words[2], rs = words[3]
         string opcode, rs, rt, immediate;
         opcode = OPCODE[words[0]]; rs = REG[words[3]]; rt = REG[words[1]]; immediate = words[2];
@@ -201,11 +189,6 @@ string instruct_I(vector<string> &words, int PC, map<string, int> labelsAddress)
             auto immediate16Bit = binary_convert(immediate, 16);
             return opcode + rs + rt + immediate16Bit;
         }
-    }
-
-    if(ins == "lb" || ins == "sb") {
-        // chua biet lam
-        return "a";
     }
 
     if(ins == "addi" || ins == "addiu" || ins == "andi" || ins == "ori") {

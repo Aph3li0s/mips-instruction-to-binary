@@ -1,5 +1,7 @@
-add $s0 $s0 4 
-add $s1 $s1 4 
-bne $s0 $s1 label 
-label: 
-add $s2 $s0 $s1 
+0: addi $s0 $s0 1 
+4: sll $s0 $s0 2 
+8: label 
+8: addi $s3 $s3 4 
+12: beq $s3 $s3 jump 
+16: jump 
+16: srl $s0 $s0 2 
