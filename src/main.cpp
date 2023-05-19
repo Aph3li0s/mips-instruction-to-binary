@@ -6,14 +6,14 @@ using namespace std;
 //Nghĩ thêm được test nào chứa các ngoại lệ thì thêm vào
 vector<string> restructure(char code[255]) {
     vector<string> formatted_str;
-    auto k = strtok(code, " ,\t");
+    auto k = strtok(code, " ,\t()");
     while(k != NULL) {
         if(*k == '#') break;
         if(*k != '.') {
             std::string str(k);
             formatted_str.push_back(k);
         }
-        k = strtok(NULL, " ,\t");
+        k = strtok(NULL, " ,\t()");
     }
     return formatted_str;
 }
