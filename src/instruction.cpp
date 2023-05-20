@@ -16,9 +16,13 @@ string binary_convert(string s, int n);
 int decimal_convert(string& binary);
 string twoComplement(string b);
 bool check_opcode(string s);
+<<<<<<< HEAD
+bool check_rt(string s);                      
+=======
 bool check_rt(string s);
 bool check_in_dict(string s);                            
 
+>>>>>>> 079f7520c85ced324eca978dc3aeecf97706db55
 string format_R(string op, string rs, string rt, string rd, string shamt);
 string instruct_R(string op, string rs, string rt, string rd);
 string instruct_I(vector<string> &words, int PC, map<string, int> labelsAddress);
@@ -104,7 +108,8 @@ bool check_rt(string s){
 }
 
 //Format của lệnh R
-string format_R(string op, string rs, string rt, string rd, string shamt = "00000"){
+string format_R(string op, string rs, string rt, string rd, string shamt = "00000"){ //Đặt giá trị mặc định của shamt là "00000"
+    //Trả về format của instruction
     string format = OPCODE[op] + REG[rs] + REG[rt] + REG[rd] + shamt + FUNCT[op];
     return format;
 }
@@ -112,8 +117,10 @@ string format_R(string op, string rs, string rt, string rd, string shamt = "0000
 //Instruction cho lệnh R
 string instruct_R(string op, string rs, string rt, string rd){
     string ins;
+    //Kiểm tra opcode có trong từ điển hay không
     if (check_opcode(op) == true) ins = op;
     if (check_rt(rt) == false){
+        //Dành riêng cho dịch bit (ngoại lệ)
         if (ins == "sll"){
             register_value[decimal_convert(REG[rd])] = 
             register_value[decimal_convert(REG[rs])] << stoi(rt);
@@ -140,6 +147,7 @@ string instruct_R(string op, string rs, string rt, string rd){
         register_value[decimal_convert(REG[rd])] = register_value[decimal_convert(REG[rs])] || register_value[decimal_convert(REG[rt])];
     }
     if (ins == "slt"){
+        //Nếu thanh ghi rs < rt thì ghi 1, ngược lại ghi 0
         (register_value[decimal_convert(REG[rs])] < register_value[decimal_convert(REG[rt])]) ?
         register_value[decimal_convert(REG[rd])] = 1 : register_value[decimal_convert(REG[rd])] = 0;
 
@@ -155,13 +163,23 @@ string instruct_R(string op, string rs, string rt, string rd){
     return format_R(op, rs, rt, rd);
 }
 
+<<<<<<< HEAD
+//Instruction cho lệnh I (tham chiếu vào dưới dạng vector string)
+=======
 // Xử lí lệnh I
+>>>>>>> 079f7520c85ced324eca978dc3aeecf97706db55
 string instruct_I(vector<string> &words, int PC, map<string, int> labelsAddress){
     string ins;
+    //Kiểm tra opcode có trong từ điển hay ko
     if (check_opcode(words[0]) == true) ins = words[0];
     if(ins == "beq" || ins == "bne") {
+<<<<<<< HEAD
+
+=======
         // Các reg không đổi vị trí
+>>>>>>> 079f7520c85ced324eca978dc3aeecf97706db55
         string opcode, rs, rt, label;
+        //Set giá trị biến tương ứng với map trong từ điển
         opcode = OPCODE[words[0]]; rs = REG[words[1]]; rt = REG[words[2]]; label = words[3];
         auto labelAddr = labelsAddress[label];
         auto immediate = (labelAddr - PC - 4) / 4;
@@ -197,7 +215,8 @@ string instruct_I(vector<string> &words, int PC, map<string, int> labelsAddress)
         string opcode, rs, rt, immediate;
         opcode = OPCODE[words[0]]; rs = REG[words[2]]; rt = REG[words[1]]; immediate = words[3];
         if (ins == "addi" || ins == "addiu"){
-            register_value[decimal_convert(rt)] = register_value[decimal_convert(rs)] +stoi(words[3]);
+            //Ghi vào thanh ghi rt giá trị của thanh ghi rs + số im
+            register_value[decimal_convert(rt)] = register_value[decimal_convert(rs)] + stoi(words[3]);
         }
         if (ins == "andi"){
             register_value[decimal_convert(rt)] = register_value[decimal_convert(rs)] & stoi(words[3]);
@@ -216,8 +235,12 @@ string instruct_I(vector<string> &words, int PC, map<string, int> labelsAddress)
             return opcode + rs + rt + immediate16Bit;
         }
     }
+<<<<<<< HEAD
+    return "Not found opcode type I";
+=======
     // Nhớ return string về, nó báo lỗi:v
     return "a";
+>>>>>>> 079f7520c85ced324eca978dc3aeecf97706db55
 }
 
 //Từ điển của MIPS

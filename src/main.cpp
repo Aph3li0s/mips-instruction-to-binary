@@ -4,8 +4,14 @@ using namespace std;
 
 // Biến này để nhập file muốn dịch
 string in; 
+<<<<<<< HEAD
+// Xóa các cmt, kí tự dư thừa, tokenize các từ và quăng vào vector
+
+//Input vào restructure là 1 các dòng đọc được trừ file txt
+=======
 
 // Xóa các cmt, kí tự dư thừa, tokenize các từ, handle label và quăng vào vector
+>>>>>>> 079f7520c85ced324eca978dc3aeecf97706db55
 vector<string> restructure(char code[255]) {
     vector<string> formatted_str;
     auto k = strtok(code, " ,\t():");
@@ -17,10 +23,15 @@ vector<string> restructure(char code[255]) {
         }
         k = strtok(NULL, " ,\t():");
     }
+    //Trả về vector chứa các từ đã được chuẩn hóa
     return formatted_str;
 }
 
+<<<<<<< HEAD
+//Chuyển file .asm thành .txt
+=======
 // Hàm này để chuyển đổi file .asm sang .txt trong trường hợp input dạng file .asm
+>>>>>>> 079f7520c85ced324eca978dc3aeecf97706db55
 void txt_convert(){
     ifstream fin("../in_out/testcases/" + in + ".asm");
     ofstream fout("../in_out/input/" + in + ".txt", ios_base::trunc);
@@ -35,16 +46,26 @@ void txt_convert(){
     fout.close();
 }
 
+<<<<<<< HEAD
+//Khai báo vector để pair với số dòng + các từ trên dòng đó
+vector<pair<int, vector<string>>> lines;
+//Map địa chỉ label
+=======
 // Biến này để lưu trữ từng dòng sau chuẩn hoá
 vector<pair<int, vector<string>>> lines;
 
 // Biến này để lưu trữ địa chỉ của label trong chương  trình
+>>>>>>> 079f7520c85ced324eca978dc3aeecf97706db55
 map<string, int> labelsAddress;
 
 // Biến này để giữ địa chỉ từng dòng
 int PC = 0;
 
+<<<<<<< HEAD
+//Hàm đọc file .txt và đưa ra file sau khi map với số dòng
+=======
 // Hàm này đọc dữ liệu từ file text (chưa chuẩn hoá) để đưa vào bước tiền xử lí
+>>>>>>> 079f7520c85ced324eca978dc3aeecf97706db55
 void read_txt(){
     ifstream fin("../in_out/input/" + in + ".txt");
     ofstream fout("../in_out/output/" + in + ".txt", ios_base::trunc);
@@ -88,6 +109,7 @@ int main(){
     txt_convert();
     read_txt();
     reg_dict();
+    //Xuât ra file nhị phân và thập lục phân
     ofstream bout("../in_out/binary/" + in + ".txt", ios_base::trunc);
     ofstream hout("../in_out/hex/" + in + ".txt", ios_base::trunc);
     size_t size = lines.size();
