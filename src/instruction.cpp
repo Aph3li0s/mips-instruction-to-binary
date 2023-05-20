@@ -322,4 +322,4 @@ void reg_dict() {
     FUNCT["sub"] = "100010";
     FUNCT["subu"] = "100011";
 }
-//int main(){}
+
