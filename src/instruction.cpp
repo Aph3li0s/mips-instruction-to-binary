@@ -194,6 +194,15 @@ string instruct_I(vector<string> &words, int PC, map<string, int> labelsAddress)
     if(ins == "addi" || ins == "addiu" || ins == "andi" || ins == "ori") {
         string opcode, rs, rt, immediate;
         opcode = OPCODE[words[0]]; rs = REG[words[2]]; rt = REG[words[1]]; immediate = words[3];
+        if (ins == "addi" || ins == "addiu"){
+            register_value[decimal_convert(rt)] = register_value[decimal_convert(rs)] +stoi(words[3]);
+        }
+        if (ins == "andi"){
+            register_value[decimal_convert(rt)] = register_value[decimal_convert(rs)] & stoi(words[3]);
+        }
+        if (ins == "ori"){
+            register_value[decimal_convert(rt)] = register_value[decimal_convert(rs)] | stoi(words[3]);
+        }
         if(stoi(immediate) < 0) {
             auto immediate16Bit = binary_convert(to_string(abs(stoi(immediate))), 16);
             auto twoComplementImmediate16Bit = twoComplement(immediate16Bit);

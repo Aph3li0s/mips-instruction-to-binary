@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 #include "instruction.h"
 using namespace std;
-
+string in; 
 // Xóa các cmt, kí tự dư thừa, tokenize các từ và quăng vào vector
 //Nghĩ thêm được test nào chứa các ngoại lệ thì thêm vào
 vector<string> restructure(char code[255]) {
@@ -19,8 +19,8 @@ vector<string> restructure(char code[255]) {
 }
 
 void txt_convert(){
-    ifstream fin("../in_out/testcases/test2.asm");
-    ofstream fout("../in_out/input/test2.txt", ios_base::trunc);
+    ifstream fin("../in_out/testcases/" + in + ".asm");
+    ofstream fout("../in_out/input/" + in + ".txt", ios_base::trunc);
     if (!fin) cout << "Can't open file";
 
     string str_read;
@@ -37,8 +37,8 @@ map<string, int> labelsAddress;
 int PC = 0;
 
 void read_txt(){
-    ifstream fin("../in_out/input/test1.txt");
-    ofstream fout("../in_out/output/test1.txt", ios_base::trunc);
+    ifstream fin("../in_out/input/" + in + ".txt");
+    ofstream fout("../in_out/output/" + in + ".txt", ios_base::trunc);
     if (!fin) cout << "Can't open file";
     string str_read;
 
@@ -66,10 +66,12 @@ void read_txt(){
 }
     
 int main(){
+    cout << "Nhap file can test: (VD: test1, test2,...)";
+    cin >> in;
     txt_convert();
     read_txt();
     reg_dict();
-    ofstream bout("../in_out/binary/test1.txt", ios_base::trunc);
+    ofstream bout("../in_out/binary/" + in + ".txt", ios_base::trunc);
     size_t size = lines.size();
     cout << "Size: " << size << "\n";
     for (const auto& line : lines) {
