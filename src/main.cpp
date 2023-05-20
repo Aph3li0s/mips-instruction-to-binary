@@ -2,8 +2,7 @@
 #include "instruction.h"
 using namespace std;
 string in; 
-// Xóa các cmt, kí tự dư thừa, tokenize các từ và quăng vào vector
-//Nghĩ thêm được test nào chứa các ngoại lệ thì thêm vào
+
 vector<string> restructure(char code[255]) {
     vector<string> formatted_str;
     auto k = strtok(code, " ,\t():");
@@ -78,10 +77,6 @@ int main(){
     for (const auto& line : lines) {
         if(line.second.size() == 1) continue;
         string output;
-        //Thêm giá trị vào thanh ghi
-        // register_value[17] = 3; //0011
-        // register_value[18] = 5; //0101
-
         auto lineAddress = line.first;
         auto words = line.second;
         //Đọc từng dòng và chuyển đổi

@@ -17,12 +17,8 @@ int decimal_convert(string& binary);
 string twoComplement(string b);
 bool check_opcode(string s);
 bool check_rt(string s);
-bool check_in_dict(string s);                            // Sao hàm này không có khai báo bên dưới nè
-
 string format_R(string op, string rs, string rt, string rd, string shamt);
 string instruct_R(string op, string rs, string rt, string rd);
-// string format_I(string op, string s1, string s2, string s3);  // Tạm thời không đi theo hướng này
-// string instruct_I(string op, string s1, string s2, string s3); // Chuyển thành hàm dưới
 string instruct_I(vector<string> &words, int PC, map<string, int> labelsAddress);
 
 void reg_dict();
