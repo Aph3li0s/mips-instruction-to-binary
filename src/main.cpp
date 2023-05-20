@@ -1,9 +1,11 @@
 #include <bits/stdc++.h>
 #include "instruction.h"
 using namespace std;
+
+// Biến này để nhập file muốn dịch
 string in; 
-// Xóa các cmt, kí tự dư thừa, tokenize các từ và quăng vào vector
-//Nghĩ thêm được test nào chứa các ngoại lệ thì thêm vào
+
+// Xóa các cmt, kí tự dư thừa, tokenize các từ, handle label và quăng vào vector
 vector<string> restructure(char code[255]) {
     vector<string> formatted_str;
     auto k = strtok(code, " ,\t():");
@@ -18,6 +20,7 @@ vector<string> restructure(char code[255]) {
     return formatted_str;
 }
 
+// Hàm này để chuyển đổi file .asm sang .txt trong trường hợp input dạng file .asm
 void txt_convert(){
     ifstream fin("../in_out/testcases/" + in + ".asm");
     ofstream fout("../in_out/input/" + in + ".txt", ios_base::trunc);
@@ -32,10 +35,16 @@ void txt_convert(){
     fout.close();
 }
 
+// Biến này để lưu trữ từng dòng sau chuẩn hoá
 vector<pair<int, vector<string>>> lines;
+
+// Biến này để lưu trữ địa chỉ của label trong chương  trình
 map<string, int> labelsAddress;
+
+// Biến này để giữ địa chỉ từng dòng
 int PC = 0;
 
+// Hàm này đọc dữ liệu từ file text (chưa chuẩn hoá) để đưa vào bước tiền xử lí
 void read_txt(){
     ifstream fin("../in_out/input/" + in + ".txt");
     ofstream fout("../in_out/output/" + in + ".txt", ios_base::trunc);
@@ -47,24 +56,32 @@ void read_txt(){
         char* c_str = new char [str_read.size() + 1];
         strcpy(c_str, str_read.c_str());
         words = restructure(c_str);
+        
+        // Nếu dòng rỗng, bỏ qua
         if(!words.size()) continue;
-        //Chẻn words vào từng dòng để lấy thứ tự dòng
+        
+        // Lưu giữ địa chỉ từng dòng
         lines.push_back({PC, words});
+        
+        // Nếu dòng hiện tại là label, không tăng biến địa chỉ
+        // Thay vào đó lưu vào từ điển để dễ truy xuất lúc sau
         if(words.size() == 1) {
-            // neu la label, them vao map cho de~ truy xuat
             labelsAddress.insert({words[0], PC});
         }
+        
         else PC += 4;
     }
 
+    // Xuất file output tạm thời
+    // File là input đã được chuẩn hoá + đánh số từng dòng, đánh dưới dạng số nguyên
     for(auto &line : lines) {
-        // khuc nay van la int, chua chuyen sang hex
         fout << line.first << ": ";
         for (auto &j : line.second) fout << j << " ";
         fout << "\n";
     }
 }
     
+
 int main(){
     cout << "Nhap file can test(VD: test1, test2,...): ";
     cin >> in;
@@ -76,9 +93,12 @@ int main(){
     size_t size = lines.size();
     cout << "Size: " << size << "\n";
     for (const auto& line : lines) {
+        
+        // Nếu dòng hiện tại là label -> không biểu diễn, bỏ qua
         if(line.second.size() == 1) continue;
+        
         string output;
-        //Thêm giá trị vào thanh ghi
+        // Thêm giá trị vào thanh ghi
         // register_value[17] = 3; //0011
         // register_value[18] = 5; //0101
 
@@ -91,17 +111,19 @@ int main(){
         }
         else output = instruct_I(words, lineAddress, labelsAddress);
         
-        //Thử in giá trị thanh ghi sau khi thực hiện lệnh add
+        // In lại lệnh sau chuẩn hoá để dễ theo dõi
         for (const auto& j : words) {
             cout << j << " ";
         }
-        //Test output
+        
+        // Test output
         cout << endl;
         cout << "rd register value: " <<register_value[decimal_convert(REG[words[1]])] << "\n";
         cout << "Bit length: " << output.length() << "\n";
         cout << "Binary address: " << output << "\n";
         cout << "Hex address: " << hex_convert(output) << "\n";
-        //Ghi giá trị vào file binary
+        
+        // Ghi giá trị vào file binary, file hex
         bout << output << "\n";
         hout << hex_convert(output) << "\n";
         cout << endl;
