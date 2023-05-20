@@ -1,34 +1,31 @@
-#include "instruction.h"
 #include <bits/stdc++.h>
 using namespace std;
 
-//Mapping các giá trị thanh ghi, opcode, function và type (R và I) 
 map<string, string> REG;
 map<string, string> OPCODE;
 map<string, string> FUNCT;
 map<string, string> TYPE;
+void init();
 
-//Mảng để lưu giá trị thanh ghi dưới dạng int
 int register_value[32] = {0};
 
-string hex_convert(string bin);
-string binary_convert(string s, int n);
-int decimal_convert(string& binary);
-string twoComplement(string b);
-bool check_opcode(string s);
-bool check_rt(string s);
-bool check_in_dict(string s);                            // Sao hàm này không có khai báo bên dưới nè
 
-string format_R(string op, string rs, string rt, string rd, string shamt);
-string instruct_R(string op, string rs, string rt, string rd);
-// string format_I(string op, string s1, string s2, string s3);  // Tạm thời không đi theo hướng này
-// string instruct_I(string op, string s1, string s2, string s3); // Chuyển thành hàm dưới
-string instruct_I(vector<string> &words, int PC, map<string, int> labelsAddress);
+// Xoa comments, spaces, commas, .data, .text
+// Tra ve vector
+vector<string> restructure(char code[255]) {
+    vector<string> _;
+    auto k = strtok(code, " ,\t");
+    while(k != NULL) {
+        if(*k == '#') break;
+        if(*k != '.') {
+            std::string str(k);
+            _.push_back(k);
+        }
+        k = strtok(NULL, " ,\t");
+    }
+    return _;
+}
 
-void reg_dict();
-
-
-//Hàm chuyển nhị phân sang thập lục phân
 string hex_convert(string bin) {
     string hex = "0x";
     for(int i = 0; i < bin.size(); i+=4) {
@@ -44,19 +41,20 @@ string hex_convert(string bin) {
     return hex;
 }
 
-//Hàm chuyển thập phân sang nhị phân với n bit
+//Convert to n-bit binary string
 string binary_convert(string s, int n) {
     int dec = stoi(s);
     string bin;
-    bin.reserve(n); 
+    bin.reserve(n); // Reserve space to avoid reallocation
+
     for (int i = 0; i < n; ++i) {
         bin = to_string(dec % 2) + bin;
         dec /= 2;
     }
+
     return bin;
 }
 
-//Hàm chuyển nhị phân sang thập phân (int)
 int decimal_convert(string& binary) {
     int decimal = 0, power = 0;
     for (int i = binary.length() - 1; i >= 0; --i) {
@@ -87,16 +85,13 @@ string twoComplement(string b) {
     return b2;
 }
 
-//Các hàm check xem opcode và thanh ghi có trong map hay ko
 bool check_opcode(string s){
-    //Kiểm tra xem từ s có trong OPCODE ko
     auto it = OPCODE.find(s);
     if (it != OPCODE.end()){
         return true;
     }
     else return false;
 }
-
 bool check_rt(string s){
     auto it = REG.find(s);
     if (it != REG.end()){
@@ -104,14 +99,19 @@ bool check_rt(string s){
     }
     else return false;
 }
-
-//Format của lệnh R
+//add $s3, $s1, $s2
+/*
+    nên là:
+        check op : nếu op là sll / srl thì trường shamt khác "00000", mà thay vào
+        đó là độ dời bit dịch: từ 0 - 31
+        Khi này, format = op + "00000" + s1 + s3 + shamt + funct
+        Các trường hợp khác thì mới có công thức như dưới
+*/
 string format_R(string op, string rs, string rt, string rd, string shamt = "00000"){
     string format = OPCODE[op] + REG[rs] + REG[rt] + REG[rd] + shamt + FUNCT[op];
     return format;
 }
 
-//Instruction cho lệnh R
 string instruct_R(string op, string rs, string rt, string rd){
     string ins;
     if (check_opcode(op) == true) ins = op;
@@ -135,6 +135,9 @@ string instruct_R(string op, string rs, string rt, string rd){
     if (ins == "and"){
         register_value[decimal_convert(REG[rd])] = register_value[decimal_convert(REG[rs])] & register_value[decimal_convert(REG[rt])];
     }
+    if (ins == "jr"){
+        //Cái này là lệnh jump
+    }
     if (ins == "nor"){
         register_value[decimal_convert(REG[rd])] = !(register_value[decimal_convert(REG[rs])] || register_value[decimal_convert(REG[rt])]);
     }
@@ -156,70 +159,72 @@ string instruct_R(string op, string rs, string rt, string rd){
 
     return format_R(op, rs, rt, rd);
 }
-string instruct_I(vector<string> &words, int PC, map<string, int> labelsAddress){
-    string ins;
-    if (check_opcode(words[0]) == true) ins = words[0];
-    if(ins == "beq" || ins == "bne") {
-        // cac reg khong doi vi tri
-        string opcode, rs, rt, label;
-        opcode = OPCODE[words[0]]; rs = REG[words[1]]; rt = REG[words[2]]; label = words[3];
-        auto labelAddr = labelsAddress[label];
-        auto immediate = (labelAddr - PC - 4) / 4;
-        if(immediate < 0) {
-            auto immediate16Bit = binary_convert(to_string(abs(immediate)), 16);
-            auto twoComplementImmediate16Bit = twoComplement(immediate16Bit);
-            return opcode + rs + rt + twoComplementImmediate16Bit;
-        }
-        else {
-            auto immediate16Bit = binary_convert(to_string(immediate), 16);
-            return opcode + rs + rt + immediate16Bit;
-        }
-    }
+//addi $s3, $s1, $s2->n value
+    /*
+        phải check trước s3 là số âm hay dương
+        nếu s3 là số âm thì phải chuyển sang biểu diễn dạng bù 2
+        nếu s3 là số dương/0 thì mới dùng công thức ở bên dưới
+    */
+string format_I(string op, string s1, string s2, string s3){
+    string format = OPCODE[op] + REG[s1] + REG[s2] + binary_convert(s3, 16);
+    return format;
+}
 
-    if(ins == "lw" || ins == "sw" || ins == "lb" || ins == "sb") {
-        // op: words[0], rt = words[1], imme = words[2], rs = words[3]
-        string opcode, rs, rt, immediate;
-        opcode = OPCODE[words[0]]; rs = REG[words[3]]; rt = REG[words[1]]; immediate = words[2];
-        if(stoi(immediate) < 0) {
-            auto immediate16Bit = binary_convert(to_string(abs(stoi(immediate))), 16);
-            auto twoComplementImmediate16Bit = twoComplement(immediate16Bit);
-            return opcode + rs + rt + twoComplementImmediate16Bit;
-        }
-        else {
-            auto immediate16Bit = binary_convert(immediate, 16);
-            return opcode + rs + rt + immediate16Bit;
-        }
-    }
-
-    if(ins == "addi" || ins == "addiu" || ins == "andi" || ins == "ori") {
-        string opcode, rs, rt, immediate;
-        opcode = OPCODE[words[0]]; rs = REG[words[2]]; rt = REG[words[1]]; immediate = words[3];
-        if (ins == "addi" || ins == "addiu"){
-            register_value[decimal_convert(rt)] = register_value[decimal_convert(rs)] +stoi(words[3]);
-        }
-        if (ins == "andi"){
-            register_value[decimal_convert(rt)] = register_value[decimal_convert(rs)] & stoi(words[3]);
-        }
-        if (ins == "ori"){
-            register_value[decimal_convert(rt)] = register_value[decimal_convert(rs)] | stoi(words[3]);
-        }
-        if(stoi(immediate) < 0) {
-            auto immediate16Bit = binary_convert(to_string(abs(stoi(immediate))), 16);
-            auto twoComplementImmediate16Bit = twoComplement(immediate16Bit);
-            return opcode + rs + rt + twoComplementImmediate16Bit;
-        }
-
-        else {
-            auto immediate16Bit = binary_convert(immediate, 16);
-            return opcode + rs + rt + immediate16Bit;
-        }
-    }
-    //Nhớ return string về, nó báo lỗi:v
+string instruct_I(){
     return "a";
 }
 
-//Từ điển của MIPS
-void reg_dict() {
+int main() {
+    init();
+    //Đọc file và xuất file
+    fstream fi("../in_out/input/test2.txt");
+    fstream fo("../in_out/output/test2.txt");
+    string tmp;
+    vector<vector<string>> lines;
+    while(getline(fi, tmp)) {
+        vector<string> words;
+        char* c_str = new char [tmp.size() + 1];
+        strcpy(c_str, tmp.c_str());
+        words = restructure(c_str);
+        if(!words.size()) continue;
+        
+        lines.push_back(words);
+        // test ket qua
+        for(auto &word : words) {
+            cout << word << " ";
+        }
+        cout << endl;
+        
+
+    }
+    //Lưu số dòng trong file input.txt
+    size_t size = lines.size();
+    cout << "Size: " << size << "\n";
+    for (const auto& words : lines) {
+        string output;
+        //Thêm giá trị vào thanh ghi
+        //register_value[17] = 30; //0011
+        //register_value[18] = 5; //0101
+
+        if (TYPE[words[0]] == "R") output = instruct_R(words[0], words[2], words[3], words[1]);
+        else output = instruct_I();
+        
+        //Thử in giá trị thanh ghi sau khi thực hiện lệnh add
+        cout << "rd register value: " <<register_value[decimal_convert(REG[words[1]])] << "\n";
+        cout << "Binary address: " << output << "\n";
+        cout << "binary length: " << output.length() << "\n";
+        //cout << "Hex address: " << hex_convert(output) << "\n";
+        // Inner loop to iterate over each inner vector
+        for (const auto& j : words) {
+            cout << j << " ";
+        }
+        cout << endl;
+    }
+}
+//add $s3, $s1, $s2
+
+
+void init() {
     // type R
     TYPE["add"] = "R";
     TYPE["addu"] = "R";
@@ -252,35 +257,34 @@ void reg_dict() {
     REG["$v0"] = "00010";
     REG["$v1"] = "00011";
     REG["$a0"] = "00100";
-    REG["$a1"] = "00101";
+    REG["$a1"] = "00101"; //5
     REG["$a2"] = "00110";
     REG["$a3"] = "00111";
-    REG["$t0"] = "01000";
+    REG["$t0"] = "01000"; 
     REG["$t1"] = "01001";
-    REG["$t2"] = "01010";
+    REG["$t2"] = "01010"; //10
     REG["$t3"] = "01011";
     REG["$t4"] = "01100";
     REG["$t5"] = "01101";
     REG["$t6"] = "01110";
-    REG["$t7"] = "01111";
+    REG["$t7"] = "01111"; //15
     REG["$s0"] = "10000";
     REG["$s1"] = "10001";
     REG["$s2"] = "10010";
     REG["$s3"] = "10011";
-    REG["$s4"] = "10100";
+    REG["$s4"] = "10100"; //20
     REG["$s5"] = "10101";
     REG["$s6"] = "10110";
     REG["$s7"] = "10111";
     REG["$t8"] = "11000";
-    REG["$t9"] = "11001";
+    REG["$t9"] = "11001"; //25
     REG["$k0"] = "11010";
     REG["$k1"] = "11011";
     REG["$gp"] = "11100";
     REG["$sp"] = "11101";
     REG["$fp"] = "11110";
-    REG["$ra"] = "11111";
-
-    // OPCODE for R ins
+    REG["$ra"] = "11111"; //31
+    // OPCODE
     OPCODE["add"] = "000000";
     OPCODE["addu"] = "000000";
     OPCODE["and"] = "000000";
@@ -294,7 +298,6 @@ void reg_dict() {
     OPCODE["sub"] = "000000";
     OPCODE["subu"] = "000000";
 
-    // OPCODE for I ins
     OPCODE["addi"] = "001000";
     OPCODE["addiu"] = "001001";
     OPCODE["andi"] = "001100";
@@ -306,7 +309,7 @@ void reg_dict() {
     OPCODE["sb"] = "101000";
     OPCODE["sw"] = "101011";
 
-    // FUNCT for R ins - I ins do not have FUNCT
+    // FUNCT
     FUNCT["add"] = "100000";
     FUNCT["addu"] = "100001";
     FUNCT["and"] = "100100";
@@ -320,4 +323,4 @@ void reg_dict() {
     FUNCT["sub"] = "100010";
     FUNCT["subu"] = "100011";
 }
-//int main(){}
+

@@ -1,4 +1,3 @@
-//Header file dùng để khai báo
 #ifndef INSTRUCTION
 #define INSTRUCTION
 
@@ -16,6 +15,7 @@ int decimal_convert(std::string& binary);
 std::string twoComplement(std::string b);
 bool check_opcode(std::string s);
 bool check_rt(std::string s);
+bool check_in_dict(std::string s);
 std::string format_R(std::string op, std::string rs, std::string rt, std::string rd, std::string shamt);
 std::string instruct_R(std::string op, std::string rs, std::string rt, std::string rd);
 std::string instruct_I(std::vector<std::string> &words, int PC, std::map<std::string, int> labelsAddress);
