@@ -2,13 +2,13 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-//Mapping các giá trị thanh ghi, opcode, function và type (R và I) 
+// Mapping các giá trị thanh ghi, opcode, function và type (R và I) 
 map<string, string> REG;
 map<string, string> OPCODE;
 map<string, string> FUNCT;
 map<string, string> TYPE;
 
-//Mảng để lưu giá trị thanh ghi dưới dạng int
+// Mảng để lưu giá trị thanh ghi dưới dạng int
 int register_value[32] = {0};
 
 string hex_convert(string bin);
@@ -17,12 +17,10 @@ int decimal_convert(string& binary);
 string twoComplement(string b);
 bool check_opcode(string s);
 bool check_rt(string s);
-bool check_in_dict(string s);                            // Sao hàm này không có khai báo bên dưới nè
+bool check_in_dict(string s);                            
 
 string format_R(string op, string rs, string rt, string rd, string shamt);
 string instruct_R(string op, string rs, string rt, string rd);
-// string format_I(string op, string s1, string s2, string s3);  // Tạm thời không đi theo hướng này
-// string instruct_I(string op, string s1, string s2, string s3); // Chuyển thành hàm dưới
 string instruct_I(vector<string> &words, int PC, map<string, int> labelsAddress);
 
 void reg_dict();
@@ -156,15 +154,18 @@ string instruct_R(string op, string rs, string rt, string rd){
 
     return format_R(op, rs, rt, rd);
 }
+
+// Xử lí lệnh I
 string instruct_I(vector<string> &words, int PC, map<string, int> labelsAddress){
     string ins;
     if (check_opcode(words[0]) == true) ins = words[0];
     if(ins == "beq" || ins == "bne") {
-        // cac reg khong doi vi tri
+        // Các reg không đổi vị trí
         string opcode, rs, rt, label;
         opcode = OPCODE[words[0]]; rs = REG[words[1]]; rt = REG[words[2]]; label = words[3];
         auto labelAddr = labelsAddress[label];
         auto immediate = (labelAddr - PC - 4) / 4;
+        // Nếu âm, bù 2
         if(immediate < 0) {
             auto immediate16Bit = binary_convert(to_string(abs(immediate)), 16);
             auto twoComplementImmediate16Bit = twoComplement(immediate16Bit);
@@ -180,6 +181,7 @@ string instruct_I(vector<string> &words, int PC, map<string, int> labelsAddress)
         // op: words[0], rt = words[1], imme = words[2], rs = words[3]
         string opcode, rs, rt, immediate;
         opcode = OPCODE[words[0]]; rs = REG[words[3]]; rt = REG[words[1]]; immediate = words[2];
+        // Nếu âm, bù 2
         if(stoi(immediate) < 0) {
             auto immediate16Bit = binary_convert(to_string(abs(stoi(immediate))), 16);
             auto twoComplementImmediate16Bit = twoComplement(immediate16Bit);
@@ -214,7 +216,7 @@ string instruct_I(vector<string> &words, int PC, map<string, int> labelsAddress)
             return opcode + rs + rt + immediate16Bit;
         }
     }
-    //Nhớ return string về, nó báo lỗi:v
+    // Nhớ return string về, nó báo lỗi:v
     return "a";
 }
 
