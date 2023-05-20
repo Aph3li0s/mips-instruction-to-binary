@@ -66,12 +66,13 @@ void read_txt(){
 }
     
 int main(){
-    cout << "Nhap file can test: (VD: test1, test2,...)";
+    cout << "Nhap file can test(VD: test1, test2,...): ";
     cin >> in;
     txt_convert();
     read_txt();
     reg_dict();
     ofstream bout("../in_out/binary/" + in + ".txt", ios_base::trunc);
+    ofstream hout("../in_out/hex/" + in + ".txt", ios_base::trunc);
     size_t size = lines.size();
     cout << "Size: " << size << "\n";
     for (const auto& line : lines) {
@@ -102,6 +103,7 @@ int main(){
         cout << "Hex address: " << hex_convert(output) << "\n";
         //Ghi giá trị vào file binary
         bout << output << "\n";
+        hout << hex_convert(output) << "\n";
         cout << endl;
     }
 }
