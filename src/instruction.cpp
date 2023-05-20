@@ -93,6 +93,7 @@ bool check_opcode(string s){
     else return false;
 }
 
+//Kiểm tra nếu từ tại vị trí rt có trong từ điển không
 bool check_rt(string s){
     auto it = REG.find(s);
     if (it != REG.end()){
@@ -111,13 +112,16 @@ string format_R(string op, string rs, string rt, string rd, string shamt = "0000
 string instruct_R(string op, string rs, string rt, string rd){
     string ins;
     if (check_opcode(op) == true) ins = op;
+    //Xử lí các lệnh đặc biệt
     if (check_rt(rt) == false){
+        //Shift left logical
         if (ins == "sll"){
             register_value[decimal_convert(REG[rd])] = 
             register_value[decimal_convert(REG[rs])] << stoi(rt);
             string shamt = binary_convert(rt, 5);
             return format_R(op, "$zero", rs, rd, shamt);
         }
+        //Shift right logical
         if (ins == "srl"){
             register_value[decimal_convert(REG[rd])] = 
             register_value[decimal_convert(REG[rs])] >> stoi(rt);
@@ -137,6 +141,7 @@ string instruct_R(string op, string rs, string rt, string rd){
     if (ins == "or"){
         register_value[decimal_convert(REG[rd])] = register_value[decimal_convert(REG[rs])] || register_value[decimal_convert(REG[rt])];
     }
+    //Set less than
     if (ins == "slt"){
         (register_value[decimal_convert(REG[rs])] < register_value[decimal_convert(REG[rt])]) ?
         register_value[decimal_convert(REG[rd])] = 1 : register_value[decimal_convert(REG[rd])] = 0;
@@ -152,26 +157,34 @@ string instruct_R(string op, string rs, string rt, string rd){
 
     return format_R(op, rs, rt, rd);
 }
+
+//Instruction cho lệnh I
 string instruct_I(vector<string> &words, int PC, map<string, int> labelsAddress){
     string ins;
     if (check_opcode(words[0]) == true) ins = words[0];
+    //Các lệnh so sánh
     if(ins == "beq" || ins == "bne") {
-        // cac reg khong doi vi tri
         string opcode, rs, rt, label;
+        //Lưu giá trị các biến từ vector words
         opcode = OPCODE[words[0]]; rs = REG[words[1]]; rt = REG[words[2]]; label = words[3];
+        //Lấy ra các giá trị từ map labelsAddress
         auto labelAddr = labelsAddress[label];
+        //Tính giá trị im bằng cách láy thứ tự dòng lệnh hiện tại trừ đi PC (label address) và chia 4 (mỗi dòng lệnh cách nhau 4 bytes)
         auto immediate = (labelAddr - PC - 4) / 4;
         if(immediate < 0) {
+            //Nếu giá trị im âm -> chuyển sang dạng bù 2 và trả về giá trị
             auto immediate16Bit = binary_convert(to_string(abs(immediate)), 16);
             auto twoComplementImmediate16Bit = twoComplement(immediate16Bit);
             return opcode + rs + rt + twoComplementImmediate16Bit;
         }
         else {
+            //Adđ giá trị im vào nếu nó dương (sau khi chuyển đổi sang nhị phân)
             auto immediate16Bit = binary_convert(to_string(immediate), 16);
+        
             return opcode + rs + rt + immediate16Bit;
         }
     }
-
+    //Các lệnh load 
     if(ins == "lw" || ins == "sw" || ins == "lb" || ins == "sb") {
         // op: words[0], rt = words[1], imme = words[2], rs = words[3]
         string opcode, rs, rt, immediate;
@@ -186,12 +199,12 @@ string instruct_I(vector<string> &words, int PC, map<string, int> labelsAddress)
             return opcode + rs + rt + immediate16Bit;
         }
     }
-
+    //Các lệnh cộng và logic số học
     if(ins == "addi" || ins == "addiu" || ins == "andi" || ins == "ori") {
         string opcode, rs, rt, immediate;
         opcode = OPCODE[words[0]]; rs = REG[words[2]]; rt = REG[words[1]]; immediate = words[3];
         if (ins == "addi" || ins == "addiu"){
-            register_value[decimal_convert(rt)] = register_value[decimal_convert(rs)] +stoi(words[3]);
+            register_value[decimal_convert(rt)] = register_value[decimal_convert(rs)] + stoi(words[3]);
         }
         if (ins == "andi"){
             register_value[decimal_convert(rt)] = register_value[decimal_convert(rs)] & stoi(words[3]);
@@ -210,13 +223,12 @@ string instruct_I(vector<string> &words, int PC, map<string, int> labelsAddress)
             return opcode + rs + rt + immediate16Bit;
         }
     }
-    //Nhớ return string về, nó báo lỗi:v
-    return "a";
+    return "Không tìm thấy lệnh I";
 }
 
 //Từ điển của MIPS
 void reg_dict() {
-    // type R
+    // Các lệnh loại R
     TYPE["add"] = "R";
     TYPE["addu"] = "R";
     TYPE["and"] = "R";
@@ -230,7 +242,7 @@ void reg_dict() {
     TYPE["sub"] = "R";
     TYPE["subu"] = "R";
 
-    // type I
+    // Các lệnh loại I
     TYPE["addi"] = "I";
     TYPE["addiu"] = "I";
     TYPE["andi"] = "I";
@@ -242,7 +254,7 @@ void reg_dict() {
     TYPE["sb"] = "I";
     TYPE["sw"] = "I";
 
-    // reg
+    // Giá trị nhị phân của các lệnh
     REG["$zero"] = "00000";
     REG["$at"] = "00001";
     REG["$v0"] = "00010";
@@ -316,4 +328,3 @@ void reg_dict() {
     FUNCT["sub"] = "100010";
     FUNCT["subu"] = "100011";
 }
-//int main(){}

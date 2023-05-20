@@ -3,6 +3,7 @@
 using namespace std;
 string in; 
 
+//Hàm chuẩn hóa, lược bỏ các cmt và các từ dư thừa 
 vector<string> restructure(char code[255]) {
     vector<string> formatted_str;
     auto k = strtok(code, " ,\t():");
@@ -16,7 +17,7 @@ vector<string> restructure(char code[255]) {
     }
     return formatted_str;
 }
-
+//Hàm chuyển đổi file .asm thành file .txt
 void txt_convert(){
     ifstream fin("../in_out/testcases/" + in + ".asm");
     ofstream fout("../in_out/input/" + in + ".txt", ios_base::trunc);
@@ -33,8 +34,10 @@ void txt_convert(){
 
 vector<pair<int, vector<string>>> lines;
 map<string, int> labelsAddress;
+//PC là địa chỉ của dòng lệnh, tính từ dòng lệnh đầu tiên
 int PC = 0;
 
+//Hàm đọc file .txt
 void read_txt(){
     ifstream fin("../in_out/input/" + in + ".txt");
     ofstream fout("../in_out/output/" + in + ".txt", ios_base::trunc);
@@ -50,14 +53,14 @@ void read_txt(){
         //Chẻn words vào từng dòng để lấy thứ tự dòng
         lines.push_back({PC, words});
         if(words.size() == 1) {
-            // neu la label, them vao map cho de~ truy xuat
+            // Nếu từ đó là label, thêm vào map
             labelsAddress.insert({words[0], PC});
         }
         else PC += 4;
     }
 
+    //Xuất ra file ouput thứ tự dòng và dòng lệnh
     for(auto &line : lines) {
-        // khuc nay van la int, chua chuyen sang hex
         fout << line.first << ": ";
         for (auto &j : line.second) fout << j << " ";
         fout << "\n";
@@ -65,15 +68,17 @@ void read_txt(){
 }
     
 int main(){
-    cout << "Nhap file can test(VD: test1, test2,...): ";
+    cout << "Nhập file cần test(VD: test1, test2,...): ";
     cin >> in;
     txt_convert();
     read_txt();
     reg_dict();
     ofstream bout("../in_out/binary/" + in + ".txt", ios_base::trunc);
     ofstream hout("../in_out/hex/" + in + ".txt", ios_base::trunc);
+    //Số lượng dòng lệnh cần chuyển đổi
     size_t size = lines.size();
     cout << "Size: " << size << "\n";
+
     for (const auto& line : lines) {
         if(line.second.size() == 1) continue;
         string output;
@@ -96,7 +101,7 @@ int main(){
         cout << "Bit length: " << output.length() << "\n";
         cout << "Binary address: " << output << "\n";
         cout << "Hex address: " << hex_convert(output) << "\n";
-        //Ghi giá trị vào file binary
+        //Ghi giá trị vào file binary và file hex
         bout << output << "\n";
         hout << hex_convert(output) << "\n";
         cout << endl;
