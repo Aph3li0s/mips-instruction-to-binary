@@ -1,0 +1,8 @@
+0: add $t1 $zero 5 
+4: add $t2 $zero 2 
+8: sub $t3 $t1 $t2 
+12: bne $t1 $t2 adorable 
+16: add $t1 $t1 1 
+20: beq $zero 0 end 
+24: add $t1 $t1 2 
+28: bne $t1 $t3 cute 
