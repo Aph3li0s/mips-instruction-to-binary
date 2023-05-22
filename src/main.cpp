@@ -37,6 +37,11 @@ map<string, int> labelsAddress;
 //PC là địa chỉ của dòng lệnh, tính từ dòng lệnh đầu tiên
 int PC = 0;
 
+// Hàm này lấy subvector của 1 vector trong 1 đoạn cho trước
+// arr: vector gốc
+// X: index vị trí đầu muốn lấy
+// Y: index vị trí đuôi muốn lấy
+// Lấy cả tại vị trí X và Y
 vector<string> slicing(vector<string>& arr, int X, int Y) {
     auto start = arr.begin() + X;
     auto end = arr.begin() + Y + 1;
@@ -58,18 +63,26 @@ void read_txt(){
         strcpy(c_str, str_read.c_str());
         tmpWords = restructure(c_str);
         if(!tmpWords.size()) continue;
+        
+        // Trường hợp: Dòng ở dạng "label_name : code"
+        // Ta tách code và label_name riêng
         else if(tmpWords.size() > 1 && !check_opcode(tmpWords[0])) {
             auto words = slicing(tmpWords, 1, tmpWords.size() - 1);
             lines.push_back({PC, words});
             labelsAddress.insert({tmpWords[0], PC});
             PC += 4;
         }
+        
+        // Trường hợp: Dòng ở dạng "code"
         else if(tmpWords.size() > 1 && check_opcode(tmpWords[0])) {
             auto words = tmpWords;
             //Chẻn words vào từng dòng để lấy thứ tự dòng
             lines.push_back({PC, words});
             PC += 4;
         }
+        
+        // Trường hợp dòng ở dạng "label_name"
+        // Do dòng chỉ có label, không tăng biến đếm địa chỉ
         else if(tmpWords.size() == 1) {
             labelsAddress.insert({tmpWords[0], PC});
         }
