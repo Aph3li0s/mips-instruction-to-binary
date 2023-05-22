@@ -3,7 +3,18 @@ Build trình thông dịch hợp ngữ MIPS bằng C++
 
 * Bao gồm lệnh nhóm lệnh I và R (Không yêu cầu code lệnh J)
 * Input file .asm, output file .txt chứa binary code
+* Các lệnh gồm
+```bash
+R:
+add | addu | and
+jr  | nor  | or
+slt | sltu | sll
+srl | sub  | subu
 
+I:
+addi | addiu | andi | beq | bne
+lb   | lw    | ori  | sb  | sw
+```
 # Quy định Input
 + Không lỗi logic
 + Không lỗi syntax nặng như lệnh add $t1, $t2, $t3 mà lại input như sau
