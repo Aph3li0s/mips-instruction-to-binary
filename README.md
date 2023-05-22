@@ -29,10 +29,18 @@ $t3
 ```bash
 label_name_1 : label_name_2: code
 ```
+hay
+```bash
+li $s1, 3
+add $s1, $s1, 3
+```
 + Tuy nhiên, trường hợp này sẽ được chấp nhận
 ```bash
 label_name : code
 ```
-
+hay
+```bash
+addi $s1, 3
+```
 *Contributors:[ Aph3li0s](https://github.com/Aph3li0s), [whynotkimhari](https://github.com/whynotkimhari), [phamtruc-work
 ](https://github.com/phamtruc-work)*
