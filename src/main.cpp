@@ -86,7 +86,7 @@ void read_txt(){
 int main(){
     // Dict has to be loaded first to handle "label: code" cases
     reg_dict();
-    cout << "Nhập file cần test(VD: test1, test2,...): ";
+    cout << "Input file to test(EX: test1, test2,...): ";
     cin >> in;
     txt_convert();
     read_txt();
