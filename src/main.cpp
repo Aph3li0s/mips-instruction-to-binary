@@ -37,6 +37,14 @@ map<string, int> labelsAddress;
 //PC là địa chỉ của dòng lệnh, tính từ dòng lệnh đầu tiên
 int PC = 0;
 
+vector<string> slicing(vector<string>& arr, int X, int Y) {
+    auto start = arr.begin() + X;
+    auto end = arr.begin() + Y + 1;
+    vector<string> result(Y - X + 1);
+    copy(start, end, result.begin());
+    return result;
+}
+
 //Hàm đọc file .txt
 void read_txt(){
     ifstream fin("../in_out/input/" + in + ".txt");
@@ -45,18 +53,26 @@ void read_txt(){
     string str_read;
 
     while (getline(fin, str_read)){
-        vector<string> words;
+        vector<string> tmpWords;
         char* c_str = new char [str_read.size() + 1];
         strcpy(c_str, str_read.c_str());
-        words = restructure(c_str);
-        if(!words.size()) continue;
-        //Chẻn words vào từng dòng để lấy thứ tự dòng
-        lines.push_back({PC, words});
-        if(words.size() == 1) {
-            // Nếu từ đó là label, thêm vào map
-            labelsAddress.insert({words[0], PC});
+        tmpWords = restructure(c_str);
+        if(!tmpWords.size()) continue;
+        else if(tmpWords.size() > 1 && !check_opcode(tmpWords[0])) {
+            auto words = slicing(tmpWords, 1, tmpWords.size() - 1);
+            lines.push_back({PC, words});
+            labelsAddress.insert({tmpWords[0], PC});
+            PC += 4;
         }
-        else PC += 4;
+        else if(tmpWords.size() > 1 && check_opcode(tmpWords[0])) {
+            auto words = tmpWords;
+            //Chẻn words vào từng dòng để lấy thứ tự dòng
+            lines.push_back({PC, words});
+            PC += 4;
+        }
+        else if(tmpWords.size() == 1) {
+            labelsAddress.insert({tmpWords[0], PC});
+        }
     }
 
     //Xuất ra file ouput thứ tự dòng và dòng lệnh
@@ -68,11 +84,13 @@ void read_txt(){
 }
     
 int main(){
+    // Dict has to be loaded first to handle "label: code" cases
+    reg_dict();
     cout << "Nhập file cần test(VD: test1, test2,...): ";
     cin >> in;
     txt_convert();
     read_txt();
-    reg_dict();
+
     ofstream bout("../in_out/binary/" + in + ".txt", ios_base::trunc);
     ofstream hout("../in_out/hex/" + in + ".txt", ios_base::trunc);
     //Số lượng dòng lệnh cần chuyển đổi
