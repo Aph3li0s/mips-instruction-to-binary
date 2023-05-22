@@ -38,9 +38,5 @@ add $s1, $s1, 3
 ```bash
 label_name : code
 ```
-hay
-```bash
-addi $s1, 3
-```
 *Contributors:[ Aph3li0s](https://github.com/Aph3li0s), [whynotkimhari](https://github.com/whynotkimhari), [phamtruc-work
 ](https://github.com/phamtruc-work)*
