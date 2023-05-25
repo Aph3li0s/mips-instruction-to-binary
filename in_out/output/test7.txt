@@ -1,0 +1,9 @@
+0: addi $s0 $s1 5 
+4: addi $s1 $s1 4 
+8: sub $s1 $s1 $s0 
+12: slt $s2 $s1 $s0 
+16: sll $s2 $s2 2 
+20: beq $s1 $s2 jump 
+24: addi $s0 $s0 1 
+28: lw $s3 0 $s2 
+32: jr $s3 
