@@ -1,0 +1,4 @@
+0: add $t0 $t0 $zero 
+4: lw $t1 4 $s3 
+8: addi $s3 $s3 4 
+12: bne $t1 $t0 Loop 
