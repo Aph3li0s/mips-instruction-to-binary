@@ -28,5 +28,10 @@ $t3
 + Lệnh add với số vui lòng dùng addi,...
 + Không hỗ trợ .data, syscall,...
 
+# Output
++ 1 file .txt chứa các dòng ở dạng: " PC(int) : code "
++ 1 file .txt chứa các dòng thể hiện code được dịch sang binary
++ 1 file .txt chứa các dòng thể hiện code được dịch sang hexa
+
 *Contributors:[ Aph3li0s](https://github.com/Aph3li0s), [whynotkimhari](https://github.com/whynotkimhari), [phamtruc-work
 ](https://github.com/phamtruc-work)*
