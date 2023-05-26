@@ -1,8 +1,0 @@
-0: addi $s1 $s1 4 
-4: ori $s2 $s1 0 
-8: srl $s1 $s1 2 
-12: beq $s1 $s2 jump 
-16: fake 
-16: addi $s0 $s1 -2 
-20: jump 
-20: add $s0 $s1 $s2 
