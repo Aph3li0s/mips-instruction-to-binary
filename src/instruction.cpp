@@ -186,17 +186,26 @@ string instruct_I(vector<string> &words, int PC, map<string, int> labelsAddress)
     }
     //Các lệnh load 
     if(ins == "lw" || ins == "sw" || ins == "lb" || ins == "sb") {
-        // op: words[0], rt = words[1], imme = words[2], rs = words[3]
-        string opcode, rs, rt, immediate;
-        opcode = OPCODE[words[0]]; rs = REG[words[3]]; rt = REG[words[1]]; immediate = words[2];
-        if(stoi(immediate) < 0) {
-            auto immediate16Bit = binary_convert(to_string(abs(stoi(immediate))), 16);
-            auto twoComplementImmediate16Bit = twoComplement(immediate16Bit);
-            return opcode + rs + rt + twoComplementImmediate16Bit;
+        if(words.size() == 4) { 
+            // op: words[0], rt = words[1], imme = words[2], rs = words[3]
+            string opcode, rs, rt, immediate;
+            opcode = OPCODE[words[0]]; rs = REG[words[3]]; rt = REG[words[1]]; immediate = words[2];
+            if(stoi(immediate) < 0) {
+                auto immediate16Bit = binary_convert(to_string(abs(stoi(immediate))), 16);
+                auto twoComplementImmediate16Bit = twoComplement(immediate16Bit);
+                return opcode + rs + rt + twoComplementImmediate16Bit;
+            }
+            else {
+                auto immediate16Bit = binary_convert(immediate, 16);
+                return opcode + rs + rt + immediate16Bit;
+            }
         }
-        else {
-            auto immediate16Bit = binary_convert(immediate, 16);
-            return opcode + rs + rt + immediate16Bit;
+        
+        else if(words.size() == 3) {
+            // default imme = 0
+            string opcode, rs, rt, immediate = "0000000000000000";
+            opcode = OPCODE[words[0]]; rs = REG[words[2]]; rt = REG[words[1]];
+            return opcode + rs + rt + immediate;
         }
     }
     //Các lệnh cộng và logic số học
