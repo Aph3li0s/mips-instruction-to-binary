@@ -24,19 +24,9 @@ $t1
 $t2
 $t3
 ```
-+ Không lỗi syntax như thiếu tham số trong 1 lệnh
-+ Không code dưới dạng
-```bash
-label_name_1 : label_name_2: code
-```
-hay
-```bash
-li $s1, 3
-add $s1, $s1, 3
-```
-+ Tuy nhiên, trường hợp này sẽ được chấp nhận
-```bash
-label_name : code
-```
++ Lệnh có thể viết ở dạng tắt như: lw $s1, ($s2) thay cho lw $s1, 0($s2),... tuy nhiên không được thiếu tham số trong lệnh
++ Lệnh add với số vui lòng dùng addi,...
++ Không hỗ trợ .data, syscall,...
+
 *Contributors:[ Aph3li0s](https://github.com/Aph3li0s), [whynotkimhari](https://github.com/whynotkimhari), [phamtruc-work
 ](https://github.com/phamtruc-work)*
